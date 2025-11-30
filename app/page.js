@@ -2,6 +2,8 @@
 
 import styled from 'styled-components'
 import Link from 'next/link'
+import Image from 'next/image'
+import { useFeaturedProducts } from '@/hooks/useProducts'
 
 const HomeContainer = styled.div`
   min-height: 100vh;
@@ -111,10 +113,109 @@ const FooterText = styled.div`
   text-align: center;
 `
 
+const SliderContainer = styled.div`
+  display: none;
+  width: 100%;
+  margin-bottom: ${props => props.theme.spacing.xl};
+  overflow: hidden;
+
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    display: block;
+  }
+`
+
+const SliderWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+`
+
+const SliderTrack = styled.div`
+  display: flex;
+  gap: ${props => props.theme.spacing.md};
+  width: max-content;
+`
+
+const Slide = styled.div`
+  flex: 0 0 calc(100vw - ${props => props.theme.spacing.xl * 2});
+  scroll-snap-align: start;
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: ${props => props.theme.borderRadius.md};
+  overflow: hidden;
+  background-color: ${props => props.theme.colors.surface};
+`
+
+const SlideImage = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+`
+
+const SlideContent = styled.div`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: ${props => props.theme.spacing.md};
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  color: ${props => props.theme.colors.background};
+`
+
+const SlideTitle = styled.h3`
+  font-size: ${props => props.theme.typography.fontSize.lg};
+  font-weight: ${props => props.theme.typography.fontWeight.semibold};
+  margin-bottom: ${props => props.theme.spacing.xs};
+`
+
+const SlidePrice = styled.div`
+  font-size: ${props => props.theme.typography.fontSize.base};
+  font-weight: ${props => props.theme.typography.fontWeight.medium};
+`
+
 export default function HomePage() {
+  const { products: featuredProducts, loading } = useFeaturedProducts()
+
   return (
     <HomeContainer>
       <MenuContainer>
+        {!loading && featuredProducts.length > 0 && (
+          <SliderContainer>
+            <SliderWrapper>
+              <SliderTrack>
+                {featuredProducts.map((product) => (
+                  <Slide key={product.id}>
+                    <Link href={`/shop/${product.id}`} style={{ display: 'block', width: '100%', height: '100%' }}>
+                      <SlideImage>
+                        <Image
+                          src={product.images[0] || '/images/products/placeholder.jpg'}
+                          alt={product.name}
+                          fill
+                          style={{ objectFit: 'cover' }}
+                          sizes="100vw"
+                        />
+                      </SlideImage>
+                      <SlideContent>
+                        <SlideTitle>{product.name}</SlideTitle>
+                        <SlidePrice>${product.price.toFixed(2)}</SlidePrice>
+                      </SlideContent>
+                    </Link>
+                  </Slide>
+                ))}
+              </SliderTrack>
+            </SliderWrapper>
+          </SliderContainer>
+        )}
         <MenuTitle>
           SINNERS<br />TESTIMONY<sub style={{ fontSize: '0.4em', verticalAlign: 'sub' }}>®</sub>
         </MenuTitle>
