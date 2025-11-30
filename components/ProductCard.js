@@ -9,15 +9,11 @@ const CardContainer = styled(Link)`
   flex-direction: column;
   text-decoration: none;
   color: inherit;
-  background-color: ${props => props.theme.colors.background};
-  border-radius: ${props => props.theme.borderRadius.lg};
-  overflow: hidden;
-  transition: transform ${props => props.theme.transitions.normal} ease,
-              box-shadow ${props => props.theme.transitions.normal} ease;
+  background-color: transparent;
+  transition: opacity ${props => props.theme.transitions.fast} ease;
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: ${props => props.theme.shadows.lg};
+    opacity: 0.8;
   }
 `
 
@@ -25,7 +21,6 @@ const ImageContainer = styled.div`
   position: relative;
   width: 100%;
   padding-top: 100%; /* Square aspect ratio */
-  background-color: ${props => props.theme.colors.surface};
   overflow: hidden;
 
   @media (max-width: ${props => props.theme.breakpoints.md}) {
@@ -42,10 +37,10 @@ const ImageWrapper = styled.div`
 `
 
 const Content = styled.div`
-  padding: ${props => props.theme.spacing.md};
+  padding-top: ${props => props.theme.spacing.sm};
   display: flex;
   flex-direction: column;
-  gap: ${props => props.theme.spacing.sm};
+  gap: ${props => props.theme.spacing.xs};
   flex: 1;
 `
 
@@ -102,6 +97,7 @@ export default function ProductCard({ product, onQuickAdd }) {
         </ImageWrapper>
       </ImageContainer>
       <Content>
+        <ProductName>{product.name}</ProductName>
         <PriceContainer>
           <PriceDisplay price={product.price} />
         </PriceContainer>
