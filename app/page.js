@@ -264,10 +264,6 @@ export default function HomePage() {
                           sizes="100vw"
                         />
                       </SlideImage>
-                      <SlideContent>
-                        <SlideTitle>{product.name}</SlideTitle>
-                        <SlidePrice>${product.price.toFixed(2)}</SlidePrice>
-                      </SlideContent>
                     </Link>
                   </Slide>
                 ))}

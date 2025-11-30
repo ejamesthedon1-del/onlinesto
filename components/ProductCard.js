@@ -76,11 +76,7 @@ const PriceContainer = styled.div`
 `
 
 const QuickAddButton = styled(Button)`
-  flex-shrink: 0;
-
-  @media (max-width: ${props => props.theme.breakpoints.md}) {
-    display: none;
-  }
+  display: none;
 `
 
 export default function ProductCard({ product, onQuickAdd }) {
@@ -106,19 +102,8 @@ export default function ProductCard({ product, onQuickAdd }) {
         </ImageWrapper>
       </ImageContainer>
       <Content>
-        <ProductCategory>{product.category}</ProductCategory>
-        <ProductName>{product.name}</ProductName>
         <PriceContainer>
           <PriceDisplay price={product.price} />
-          {onQuickAdd && (
-            <QuickAddButton
-              size="small"
-              onClick={handleQuickAdd}
-              aria-label={`Quick add ${product.name} to cart`}
-            >
-              Add
-            </QuickAddButton>
-          )}
         </PriceContainer>
       </Content>
     </CardContainer>
