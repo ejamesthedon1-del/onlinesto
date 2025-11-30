@@ -9,12 +9,14 @@ const GridContainer = styled.div`
 
   @media (max-width: ${props => props.theme.breakpoints.md}) {
     grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: ${props => props.theme.spacing.md};
+    gap: ${props => props.theme.spacing.xl};
+    row-gap: ${props => props.theme.spacing['2xl']};
   }
 
   @media (max-width: ${props => props.theme.breakpoints.sm}) {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: ${props => props.theme.spacing.md};
+    gap: ${props => props.theme.spacing.xl};
+    row-gap: ${props => props.theme.spacing['2xl']};
   }
 
   @media (min-width: ${props => props.theme.breakpoints.lg}) {

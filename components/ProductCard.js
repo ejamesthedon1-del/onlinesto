@@ -53,6 +53,10 @@ const ProductName = styled.h3`
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    font-weight: ${props => props.theme.typography.fontWeight.normal};
+  }
 `
 
 const ProductCategory = styled.span`
