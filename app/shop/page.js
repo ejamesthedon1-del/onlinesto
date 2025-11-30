@@ -31,7 +31,7 @@ const Sidebar = styled.aside`
   padding-top: ${props => props.theme.spacing.lg};
 
   @media (max-width: ${props => props.theme.breakpoints.lg}) {
-    padding-top: 0;
+    display: none;
   }
 `
 
