@@ -27,6 +27,10 @@ const ImageContainer = styled.div`
   padding-top: 100%; /* Square aspect ratio */
   background-color: ${props => props.theme.colors.surface};
   overflow: hidden;
+
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    padding-top: 130%; /* Taller aspect ratio on mobile */
+  }
 `
 
 const ImageWrapper = styled.div`
@@ -73,6 +77,10 @@ const PriceContainer = styled.div`
 
 const QuickAddButton = styled(Button)`
   flex-shrink: 0;
+
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    display: none;
+  }
 `
 
 export default function ProductCard({ product, onQuickAdd }) {

@@ -7,6 +7,11 @@ const GridContainer = styled.div`
   gap: ${props => props.theme.spacing.xl};
   padding: ${props => props.theme.spacing.lg} 0;
 
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: ${props => props.theme.spacing.md};
+  }
+
   @media (max-width: ${props => props.theme.breakpoints.sm}) {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
     gap: ${props => props.theme.spacing.md};
