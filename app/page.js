@@ -1,5 +1,6 @@
 'use client'
 
+import { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import Link from 'next/link'
 import Image from 'next/image'
@@ -183,8 +184,66 @@ const SlidePrice = styled.div`
   font-weight: ${props => props.theme.typography.fontWeight.medium};
 `
 
+const DateTimeStamp = styled.div`
+  font-size: ${props => props.theme.typography.fontSize.xs};
+  color: ${props => props.theme.colors.textSecondary};
+  text-align: center;
+  margin-top: ${props => props.theme.spacing.xs};
+  font-weight: ${props => props.theme.typography.fontWeight.normal};
+  letter-spacing: 0.05em;
+  display: flex;
+  flex-direction: column;
+  gap: ${props => props.theme.spacing.xs};
+`
+
+const DateTimeText = styled.div`
+  display: flex;
+  gap: ${props => props.theme.spacing.sm};
+  justify-content: center;
+  align-items: center;
+`
+
+const Counter = styled.span`
+  font-weight: ${props => props.theme.typography.fontWeight.medium};
+  color: ${props => props.theme.colors.text};
+`
+
 export default function HomePage() {
   const { products: featuredProducts, loading } = useFeaturedProducts()
+  const [dateTime, setDateTime] = useState({ date: '', time: '', counter: 0 })
+
+  useEffect(() => {
+    const startTime = Date.now()
+    
+    const updateDateTime = () => {
+      const now = new Date()
+      const elapsed = Math.floor((Date.now() - startTime) / 1000) // seconds since page load
+      
+      const dateOptions = { 
+        month: 'short', 
+        day: 'numeric', 
+        year: 'numeric'
+      }
+      
+      const timeOptions = {
+        hour: '2-digit', 
+        minute: '2-digit',
+        second: '2-digit',
+        hour12: true
+      }
+      
+      setDateTime({
+        date: now.toLocaleDateString('en-US', dateOptions),
+        time: now.toLocaleTimeString('en-US', timeOptions),
+        counter: elapsed
+      })
+    }
+
+    updateDateTime()
+    const interval = setInterval(updateDateTime, 1000) // Update every second
+
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <HomeContainer>
@@ -219,6 +278,14 @@ export default function HomePage() {
         <MenuTitle>
           SINNERS<br />TESTIMONY<sub style={{ fontSize: '0.4em', verticalAlign: 'sub' }}>®</sub>
         </MenuTitle>
+        {dateTime.date && (
+          <DateTimeStamp>
+            <DateTimeText>
+              <span>{dateTime.date}</span>
+              <span>{dateTime.time}</span>
+            </DateTimeText>
+          </DateTimeStamp>
+        )}
         <MenuList>
           <MenuItem>
             <MenuLink href="/shop">Shop</MenuLink>
