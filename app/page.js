@@ -208,6 +208,24 @@ const Counter = styled.span`
   color: ${props => props.theme.colors.text};
 `
 
+const FactoryVideoContainer = styled.div`
+  display: none;
+  width: 100%;
+  margin-bottom: ${props => props.theme.spacing.xl};
+  border-radius: ${props => props.theme.borderRadius.md};
+  overflow: hidden;
+
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    display: block;
+  }
+`
+
+const FactoryVideo = styled.video`
+  width: 100%;
+  height: auto;
+  display: block;
+`
+
 export default function HomePage() {
   const { products: featuredProducts, loading } = useFeaturedProducts()
   const [dateTime, setDateTime] = useState({ date: '', time: '', counter: 0 })
@@ -248,6 +266,19 @@ export default function HomePage() {
   return (
     <HomeContainer>
       <MenuContainer>
+        <FactoryVideoContainer>
+          <FactoryVideo
+            autoPlay
+            loop
+            muted
+            playsInline
+            aria-label="Clothing factory animation"
+          >
+            <source src="/videos/factory-animation.mp4" type="video/mp4" />
+            <source src="/videos/factory-animation.webm" type="video/webm" />
+            Your browser does not support the video tag.
+          </FactoryVideo>
+        </FactoryVideoContainer>
         {!loading && featuredProducts.length > 0 && (
           <SliderContainer>
             <SliderWrapper>
