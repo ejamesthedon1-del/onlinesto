@@ -56,6 +56,7 @@ const ProductName = styled.h3`
 
   @media (max-width: ${props => props.theme.breakpoints.md}) {
     font-weight: ${props => props.theme.typography.fontWeight.normal};
+    font-size: ${props => props.theme.typography.fontSize.base};
   }
 `
 

@@ -12,6 +12,11 @@ const PriceContainer = styled.span`
 
   @media (max-width: ${props => props.theme.breakpoints.md}) {
     font-weight: ${props => props.theme.typography.fontWeight.normal};
+    font-size: ${props => {
+      if (props.size === 'small') return props.theme.typography.fontSize.xs
+      if (props.size === 'large') return props.theme.typography.fontSize.lg
+      return props.theme.typography.fontSize.base
+    }};
   }
 `
 
