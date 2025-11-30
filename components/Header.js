@@ -61,33 +61,36 @@ const CartLink = styled(Link)`
   position: relative;
   display: flex;
   align-items: center;
-  gap: ${props => props.theme.spacing.sm};
-  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
-  background-color: ${props => props.theme.colors.primary};
-  color: ${props => props.theme.colors.background};
-  border-radius: ${props => props.theme.borderRadius.md};
+  justify-content: center;
+  background-color: transparent;
+  color: ${props => props.theme.colors.text};
   text-decoration: none;
-  font-weight: ${props => props.theme.typography.fontWeight.medium};
-  transition: background-color ${props => props.theme.transitions.fast} ease;
+  transition: color ${props => props.theme.transitions.fast} ease;
 
   &:hover {
-    background-color: ${props => props.theme.colors.accent};
+    color: ${props => props.theme.colors.accent};
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
   }
 `
 
 const CartBadge = styled.span`
   position: absolute;
-  top: -8px;
-  right: -8px;
-  background-color: ${props => props.theme.colors.accent};
+  top: -4px;
+  right: -4px;
+  background-color: ${props => props.theme.colors.text};
   color: ${props => props.theme.colors.background};
   border-radius: ${props => props.theme.borderRadius.full};
-  width: 24px;
-  height: 24px;
+  width: 14px;
+  height: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: ${props => props.theme.typography.fontSize.xs};
+  font-size: 8px;
   font-weight: ${props => props.theme.typography.fontWeight.bold};
 `
 
@@ -101,8 +104,10 @@ export default function Header() {
         <Nav>
           <NavLink href="/">Home</NavLink>
           <NavLink href="/shop">Shop</NavLink>
-          <CartLink href="/cart">
-            Cart
+          <CartLink href="/cart" aria-label="Shopping cart">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+            </svg>
             {itemCount > 0 && <CartBadge>{itemCount}</CartBadge>}
           </CartLink>
         </Nav>
