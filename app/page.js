@@ -19,6 +19,10 @@ const MenuContainer = styled.nav`
   flex-direction: column;
   align-items: flex-start;
   gap: ${props => props.theme.spacing.xl};
+
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    align-items: center;
+  }
 `
 
 const MenuTitle = styled.h1`
@@ -31,7 +35,10 @@ const MenuTitle = styled.h1`
   align-self: center;
   line-height: 0.9;
   font-family: ${props => props.currentFont || props.theme.typography.fontFamily.sans};
-  transition: font-family ${props => props.theme.transitions.fast} ease;
+  transition: font-family 200ms ease-in-out;
+  will-change: font-family;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
 
   @media (max-width: ${props => props.theme.breakpoints.md}) {
     font-size: ${props => props.theme.typography.fontSize['3xl']};
@@ -45,6 +52,11 @@ const DescriptionText = styled.p`
   color: ${props => props.theme.colors.text};
   line-height: ${props => props.theme.typography.lineHeight.relaxed};
   max-width: 600px;
+
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    font-size: ${props => props.theme.typography.fontSize.sm};
+    text-align: center;
+  }
 `
 
 const SocialIcons = styled.div`
@@ -53,6 +65,10 @@ const SocialIcons = styled.div`
   align-items: center;
   justify-content: flex-start;
   margin-top: ${props => props.theme.spacing.lg};
+
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    justify-content: center;
+  }
 `
 
 const SocialIcon = styled.a`
@@ -187,6 +203,10 @@ const SubscriptionContainer = styled.div`
   gap: ${props => props.theme.spacing.sm};
   margin-top: ${props => props.theme.spacing.lg};
   width: 100%;
+
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    align-items: center;
+  }
 `
 
 const SubscriptionForm = styled.form`
@@ -225,32 +245,23 @@ const SubscribeButton = styled.button`
   padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
   font-size: ${props => props.theme.typography.fontSize.base};
   font-weight: ${props => props.theme.typography.fontWeight.medium};
-  color: ${props => props.theme.colors.text};
-  background-color: transparent;
-  border: none;
+  color: ${props => props.theme.colors.background};
+  background-color: ${props => props.theme.colors.text};
+  border: 1px solid ${props => props.theme.colors.text};
+  border-radius: ${props => props.theme.borderRadius.xl};
   cursor: pointer;
-  transition: color ${props => props.theme.transitions.normal} ease;
+  transition: all ${props => props.theme.transitions.normal} ease;
   font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  text-align: left;
-  position: relative;
+  text-align: center;
 
   &:hover {
-    color: ${props => props.theme.colors.accent};
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 2px;
     background-color: ${props => props.theme.colors.accent};
-    transition: width ${props => props.theme.transitions.normal} ease;
+    border-color: ${props => props.theme.colors.accent};
+    color: ${props => props.theme.colors.background};
   }
 
-  &:hover::after {
-    width: 100%;
+  &:active {
+    transform: scale(0.98);
   }
 
   &:disabled {
@@ -344,7 +355,7 @@ export default function HomePage() {
         
         return nextIndex
       })
-    }, 250) // Slower speed: 250ms per font
+    }, 300) // Slower speed: 300ms per font for smoother transitions
 
     return () => clearInterval(fontInterval)
   }, [])
