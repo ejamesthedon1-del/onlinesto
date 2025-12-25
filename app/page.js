@@ -30,50 +30,21 @@ const MenuTitle = styled.h1`
   text-align: left;
   align-self: center;
   line-height: 0.9;
+  font-family: ${props => props.currentFont || props.theme.typography.fontFamily.sans};
+  transition: font-family ${props => props.theme.transitions.fast} ease;
 
   @media (max-width: ${props => props.theme.breakpoints.md}) {
     font-size: ${props => props.theme.typography.fontSize['3xl']};
   }
 `
 
-const MenuList = styled.ul`
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: ${props => `calc(${props.theme.spacing.lg} / 2)`};
-  align-items: flex-start;
-`
-
-const MenuItem = styled.li`
-  font-size: ${props => props.theme.typography.fontSize['2xl']};
+const DescriptionText = styled.p`
+  font-size: ${props => props.theme.typography.fontSize.base};
   font-weight: ${props => props.theme.typography.fontWeight.medium};
   text-align: left;
-`
-
-const MenuLink = styled(Link)`
   color: ${props => props.theme.colors.text};
-  text-decoration: none;
-  transition: color ${props => props.theme.transitions.normal} ease;
-  position: relative;
-
-  &:hover {
-    color: ${props => props.theme.colors.accent};
-  }
-
-  &::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background-color: ${props => props.theme.colors.accent};
-    transition: width ${props => props.theme.transitions.normal} ease;
-  }
-
-  &:hover::after {
-    width: 100%;
-  }
+  line-height: ${props => props.theme.typography.lineHeight.relaxed};
+  max-width: 600px;
 `
 
 const SocialIcons = styled.div`
@@ -194,6 +165,8 @@ const DateTimeStamp = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${props => props.theme.spacing.xs};
+  align-self: center;
+  width: 100%;
 `
 
 const DateTimeText = styled.div`
@@ -208,9 +181,173 @@ const Counter = styled.span`
   color: ${props => props.theme.colors.text};
 `
 
+const SubscriptionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${props => props.theme.spacing.sm};
+  margin-top: ${props => props.theme.spacing.lg};
+  width: 100%;
+`
+
+const SubscriptionForm = styled.form`
+  display: flex;
+  flex-direction: column;
+  gap: ${props => props.theme.spacing.sm};
+  align-items: stretch;
+`
+
+const EmailInput = styled.input`
+  flex: 1;
+  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
+  font-size: ${props => props.theme.typography.fontSize.base};
+  font-weight: ${props => props.theme.typography.fontWeight.medium};
+  border: 1px solid ${props => props.theme.colors.border};
+  border-radius: ${props => props.theme.borderRadius.xl};
+  background-color: ${props => props.theme.colors.background};
+  color: ${props => props.theme.colors.text};
+  transition: border-color ${props => props.theme.transitions.normal} ease;
+  font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  text-align: left;
+
+  &:focus {
+    outline: none;
+    border-color: ${props => props.theme.colors.accent};
+  }
+
+  &::placeholder {
+    color: ${props => props.theme.colors.textSecondary};
+    opacity: 0.6;
+    font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  }
+`
+
+const SubscribeButton = styled.button`
+  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
+  font-size: ${props => props.theme.typography.fontSize.base};
+  font-weight: ${props => props.theme.typography.fontWeight.medium};
+  color: ${props => props.theme.colors.text};
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  transition: color ${props => props.theme.transitions.normal} ease;
+  font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  text-align: left;
+  position: relative;
+
+  &:hover {
+    color: ${props => props.theme.colors.accent};
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: ${props => props.theme.colors.accent};
+    transition: width ${props => props.theme.transitions.normal} ease;
+  }
+
+  &:hover::after {
+    width: 100%;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`
+
+const SubscriptionMessage = styled.div`
+  font-size: ${props => props.theme.typography.fontSize['2xl']};
+  font-weight: ${props => props.theme.typography.fontWeight.medium};
+  color: ${props => props.status === 'success' ? props.theme.colors.success : props.theme.colors.error};
+  margin-top: ${props => props.theme.spacing.xs};
+  text-align: left;
+`
+
+// Array of fonts to cycle through (mix of web-safe and Google Fonts)
+const FONT_ARRAY = [
+  'Impact',
+  'Arial Black',
+  'Bebas Neue',
+  'Oswald',
+  'Anton',
+  'Bangers',
+  'Black Ops One',
+  'Creepster',
+  'Russo One',
+  'Orbitron',
+  'Rajdhani',
+  'Righteous',
+  'Fredoka One',
+  'Lilita One',
+  'Passion One',
+  'Staatliches',
+  'Changa One',
+  'Comfortaa',
+  'Josefin Sans',
+  'Montserrat',
+  'Raleway',
+  'Roboto',
+  'Open Sans',
+  'Lato',
+  'Poppins',
+  'Ubuntu',
+  'Playfair Display',
+  'Merriweather',
+  'Lora',
+  'Crimson Text',
+  'Libre Baskerville',
+  'PT Serif',
+  'Source Serif Pro',
+  'Arvo',
+  'Roboto Slab',
+  'Oxygen',
+  'Quicksand',
+  'Nunito',
+  'Work Sans',
+  'Inter',
+  'DM Sans',
+  'Space Grotesk',
+  'Syne',
+  'Archivo',
+  'Manrope',
+  'Georgia',
+  'Courier New',
+  'Verdana',
+  'Times New Roman',
+  'Trebuchet MS',
+  'Satoshi' // Final font (theme font)
+]
+
 export default function HomePage() {
   const { products: featuredProducts, loading } = useFeaturedProducts()
   const [dateTime, setDateTime] = useState({ date: '', time: '', counter: 0 })
+  const [email, setEmail] = useState('')
+  const [subscriptionStatus, setSubscriptionStatus] = useState(null) // 'success', 'error', or null
+  
+  // Font animation state
+  const [currentFontIndex, setCurrentFontIndex] = useState(0)
+
+  // Font animation effect - continuous loop
+  useEffect(() => {
+    const fontInterval = setInterval(() => {
+      setCurrentFontIndex((prevIndex) => {
+        const nextIndex = prevIndex + 1
+        
+        // Loop back to start when reaching the end
+        if (nextIndex >= FONT_ARRAY.length) {
+          return 0
+        }
+        
+        return nextIndex
+      })
+    }, 250) // Slower speed: 250ms per font
+
+    return () => clearInterval(fontInterval)
+  }, [])
 
   useEffect(() => {
     const startTime = Date.now()
@@ -245,6 +382,35 @@ export default function HomePage() {
     return () => clearInterval(interval)
   }, [])
 
+  const handleSubscribe = async (e) => {
+    e.preventDefault()
+    
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      setSubscriptionStatus('error')
+      return
+    }
+
+    // Here you would typically send the email to your backend/email service
+    // For now, we'll just simulate a successful subscription
+    try {
+      // TODO: Replace with actual API call to your email service
+      // await fetch('/api/subscribe', { method: 'POST', body: JSON.stringify({ email }) })
+      
+      console.log('Subscribed email:', email)
+      setSubscriptionStatus('success')
+      setEmail('')
+      
+      // Reset success message after 3 seconds
+      setTimeout(() => {
+        setSubscriptionStatus(null)
+      }, 3000)
+    } catch (error) {
+      setSubscriptionStatus('error')
+    }
+  }
+
   return (
     <HomeContainer>
       <MenuContainer>
@@ -271,7 +437,7 @@ export default function HomePage() {
             </SliderWrapper>
           </SliderContainer>
         )}
-        <MenuTitle>
+        <MenuTitle currentFont={FONT_ARRAY[currentFontIndex]}>
           SINNERS<br />TESTIMONY<sub style={{ fontSize: '0.4em', verticalAlign: 'sub' }}>®</sub>
         </MenuTitle>
         {dateTime.date && (
@@ -282,20 +448,31 @@ export default function HomePage() {
             </DateTimeText>
           </DateTimeStamp>
         )}
-        <MenuList>
-          <MenuItem>
-            <MenuLink href="/shop">Shop</MenuLink>
-          </MenuItem>
-          <MenuItem>
-            <MenuLink href="/faq">FAQ</MenuLink>
-          </MenuItem>
-          <MenuItem>
-            <MenuLink href="/track-order">Track my order</MenuLink>
-          </MenuItem>
-          <MenuItem>
-            <MenuLink href="/waitlist">Join the waitlist</MenuLink>
-          </MenuItem>
-        </MenuList>
+        <DescriptionText>
+          These new Sinners Testimony drops are hand made pieces, never manufactured. Each piece is crafted with care and attention to detail, ensuring that every item is unique and authentic.
+        </DescriptionText>
+        <SubscriptionContainer>
+          <SubscriptionForm onSubmit={handleSubscribe}>
+            <EmailInput
+              id="email-subscribe"
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <SubscribeButton type="submit">
+              Subscribe
+            </SubscribeButton>
+          </SubscriptionForm>
+          {subscriptionStatus && (
+            <SubscriptionMessage status={subscriptionStatus}>
+              {subscriptionStatus === 'success' 
+                ? 'Thank you for subscribing!' 
+                : 'Please enter a valid email address.'}
+            </SubscriptionMessage>
+          )}
+        </SubscriptionContainer>
         <SocialIcons>
           <SocialIcon href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
