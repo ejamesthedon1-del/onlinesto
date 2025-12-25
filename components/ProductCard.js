@@ -22,6 +22,8 @@ const ImageContainer = styled.div`
   width: 100%;
   padding-top: 100%; /* Square aspect ratio */
   overflow: hidden;
+  background-color: ${props => props.theme.colors.surface};
+  border-radius: ${props => props.theme.borderRadius.md};
 
   @media (max-width: ${props => props.theme.breakpoints.md}) {
     padding-top: 130%; /* Taller aspect ratio on mobile */
@@ -34,10 +36,13 @@ const ImageWrapper = styled.div`
   left: 0;
   width: 100%;
   height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 
 const Content = styled.div`
-  padding-top: ${props => props.theme.spacing.sm};
+  padding-top: ${props => props.theme.spacing.xs};
   display: flex;
   flex-direction: column;
   gap: ${props => props.theme.spacing.xs};
@@ -88,16 +93,21 @@ export default function ProductCard({ product, onQuickAdd }) {
     }
   }
 
+  // Get the first image, or use placeholder if no images exist
+  const hasImages = product.images && Array.isArray(product.images) && product.images.length > 0 && product.images[0]
+  const imageSrc = hasImages ? product.images[0] : '/images/products/placeholder.jpg'
+
   return (
     <CardContainer href={`/shop/${product.id}`}>
       <ImageContainer>
         <ImageWrapper>
           <Image
-            src={product.images[0] || '/images/products/placeholder.jpg'}
+            src={imageSrc}
             alt={product.name}
             fill
-            style={{ objectFit: 'cover' }}
+            style={{ objectFit: 'contain' }}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+            unoptimized
           />
         </ImageWrapper>
       </ImageContainer>

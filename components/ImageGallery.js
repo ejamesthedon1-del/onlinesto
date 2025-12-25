@@ -11,18 +11,23 @@ const GalleryContainer = styled.div`
 const MainImageContainer = styled.div`
   position: relative;
   width: 100%;
-  padding-top: 100%; /* Square aspect ratio */
+  max-width: 1080px;
+  margin: 0 auto;
   background-color: ${props => props.theme.colors.surface};
   border-radius: ${props => props.theme.borderRadius.lg};
   overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 
 const MainImageWrapper = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
+  position: relative;
   width: 100%;
-  height: 100%;
+  max-width: 1080px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 
 const ThumbnailContainer = styled.div`
@@ -68,8 +73,10 @@ export default function ImageGallery({ images = [] }) {
             <Image
               src="/images/products/placeholder.jpg"
               alt="Product placeholder"
-              fill
-              style={{ objectFit: 'cover' }}
+              width={1080}
+              height={1080}
+              style={{ objectFit: 'contain', width: '100%', height: 'auto' }}
+              unoptimized
             />
           </MainImageWrapper>
         </MainImageContainer>
@@ -86,10 +93,12 @@ export default function ImageGallery({ images = [] }) {
           <Image
             src={mainImage}
             alt={`Product image ${selectedIndex + 1}`}
-            fill
-            style={{ objectFit: 'cover' }}
-            sizes="(max-width: 768px) 100vw, 50vw"
+            width={1080}
+            height={1080}
+            style={{ objectFit: 'contain', width: '100%', height: 'auto', maxWidth: '1080px' }}
+            sizes="(max-width: 768px) 100vw, 1080px"
             priority
+            unoptimized
           />
         </MainImageWrapper>
       </MainImageContainer>

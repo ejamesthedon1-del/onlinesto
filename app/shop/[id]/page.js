@@ -24,6 +24,11 @@ const ProductContainer = styled.div`
   @media (max-width: ${props => props.theme.breakpoints.md}) {
     grid-template-columns: 1fr;
   }
+  
+  @media (min-width: 1200px) {
+    grid-template-columns: 1080px 1fr;
+    justify-content: center;
+  }
 `
 
 const ProductInfo = styled.div`
@@ -88,6 +93,58 @@ const NotFoundState = styled.div`
   padding: ${props => props.theme.spacing['3xl']};
 `
 
+const SizeSelector = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${props => props.theme.spacing.sm};
+  margin-top: ${props => props.theme.spacing.xs};
+`
+
+const SizeLabel = styled.span`
+  font-size: ${props => props.theme.typography.fontSize.sm};
+  color: ${props => props.theme.colors.textSecondary};
+  font-weight: ${props => props.theme.typography.fontWeight.normal};
+`
+
+const SizeGrid = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: ${props => props.theme.spacing.sm};
+`
+
+const SizeButton = styled.button`
+  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
+  font-size: ${props => props.theme.typography.fontSize.base};
+  font-weight: ${props => props.theme.typography.fontWeight.medium};
+  border: 1px solid ${props => props.available ? props.theme.colors.border : props.theme.colors.border};
+  border-radius: ${props => props.theme.borderRadius.md};
+  background-color: ${props => props.selected 
+    ? props.theme.colors.text 
+    : props.available 
+      ? props.theme.colors.background 
+      : props.theme.colors.surface};
+  color: ${props => props.selected 
+    ? props.theme.colors.background 
+    : props.available 
+      ? props.theme.colors.text 
+      : props.theme.colors.textSecondary};
+  cursor: ${props => props.available ? 'pointer' : 'not-allowed'};
+  opacity: ${props => props.available ? 1 : 0.5};
+  transition: all ${props => props.theme.transitions.fast} ease;
+  font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  
+  &:hover {
+    ${props => props.available && `
+      border-color: ${props.theme.colors.text};
+      background-color: ${props.selected ? props.theme.colors.text : props.theme.colors.surface};
+    `}
+  }
+  
+  &:disabled {
+    cursor: not-allowed;
+  }
+`
+
 export default function ProductDetailPage({ params }) {
   const { product, loading, error } = useProduct(params.id)
   const { addToCart } = useCart()
@@ -133,12 +190,19 @@ export default function ProductDetailPage({ params }) {
     )
   }
 
+  // Standard sizes to display
+  const standardSizes = ['Small', 'Medium', 'Large', '2X']
+  
   const sizeOptions = product.sizes?.map(size => ({ value: size, label: size })) || []
   const colorOptions = product.colors?.map(color => ({ value: color, label: color })) || []
   const quantityOptions = Array.from({ length: Math.min(product.stock, 10) }, (_, i) => ({
     value: (i + 1).toString(),
     label: (i + 1).toString(),
   }))
+  
+  const isSizeAvailable = (size) => {
+    return product.sizes && product.sizes.includes(size)
+  }
 
   return (
     <PageContainer>
@@ -148,21 +212,30 @@ export default function ProductDetailPage({ params }) {
           <ProductCategory>{product.category}</ProductCategory>
           <ProductName>{product.name}</ProductName>
           <PriceDisplay price={product.price} size="large" />
+          <SizeSelector>
+            <SizeLabel>Size</SizeLabel>
+            <SizeGrid>
+              {standardSizes.map((size) => {
+                const available = isSizeAvailable(size)
+                const isSelected = selectedSize === size
+                return (
+                  <SizeButton
+                    key={size}
+                    available={available}
+                    selected={isSelected}
+                    onClick={() => available && setSelectedSize(size)}
+                    disabled={!available}
+                    type="button"
+                  >
+                    {size}
+                  </SizeButton>
+                )
+              })}
+            </SizeGrid>
+          </SizeSelector>
           <ProductDescription>{product.description}</ProductDescription>
           
           <ProductDetails>
-            {product.sizes && product.sizes.length > 0 && (
-              <DetailRow>
-                <Select
-                  label="Size"
-                  value={selectedSize}
-                  onChange={(e) => setSelectedSize(e.target.value)}
-                  options={sizeOptions}
-                  placeholder="Select a size"
-                />
-              </DetailRow>
-            )}
-            
             {product.colors && product.colors.length > 0 && (
               <DetailRow>
                 <Select

@@ -99,6 +99,14 @@ const FooterText = styled.div`
   font-size: ${props => props.theme.typography.fontSize.xs};
   color: ${props => props.theme.colors.textSecondary};
   text-align: center;
+
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    margin-top: ${props => props.theme.spacing.xl};
+  }
 `
 
 const SliderContainer = styled.div`
@@ -460,7 +468,7 @@ export default function HomePage() {
           </DateTimeStamp>
         )}
         <DescriptionText>
-          These new Sinners Testimony drops are hand made pieces, never manufactured. Each piece is crafted with care and attention to detail, ensuring that every item is unique and authentic.
+          Handcrafted. Not manufactured. Each piece is made by hand, one at a time. Every detail matters. Every stitch is intentional. This is clothing designed to be unique. Built to be yours alone.
         </DescriptionText>
         <SubscriptionContainer>
           <SubscriptionForm onSubmit={handleSubscribe}>
