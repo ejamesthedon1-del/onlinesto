@@ -41,6 +41,10 @@ const Logo = styled(Link)`
   left: 50%;
   transform: translateX(-50%);
   white-space: nowrap;
+
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    order: 2;
+  }
 `
 
 const Nav = styled.nav`
@@ -50,6 +54,7 @@ const Nav = styled.nav`
 
   @media (max-width: ${props => props.theme.breakpoints.md}) {
     gap: ${props => props.theme.spacing.md};
+    order: 1;
   }
 `
 
@@ -61,6 +66,8 @@ const RightNav = styled.nav`
 
   @media (max-width: ${props => props.theme.breakpoints.md}) {
     gap: ${props => props.theme.spacing.md};
+    margin-left: auto;
+    order: 3;
   }
 `
 
@@ -178,6 +185,10 @@ const HamburgerButton = styled.button`
 
   @media (max-width: ${props => props.theme.breakpoints.md}) {
     display: flex;
+    
+    &.mobile-menu-right {
+      display: none;
+    }
   }
 `
 
@@ -342,24 +353,27 @@ export default function Header() {
               <SubmenuLink href="/shop?category=Outerwear" onClick={closeShopMenu}>Outerwear</SubmenuLink>
             </Submenu>
           </div>
+          <HamburgerButton onClick={toggleMenu} aria-label="Toggle menu">
+            <HamburgerLine isOpen={isMenuOpen} />
+            <HamburgerLine isOpen={isMenuOpen} />
+            <HamburgerLine isOpen={isMenuOpen} />
+          </HamburgerButton>
         </Nav>
         <Logo href="/" currentFont={FONT_ARRAY[currentFontIndex]}>
           SINNERS TESTIMONY<sub style={{ fontSize: '0.4em', verticalAlign: 'sub' }}>®</sub>
         </Logo>
         <RightNav>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <HamburgerButton onClick={toggleMenu} aria-label="Toggle menu">
-              <HamburgerLine isOpen={isMenuOpen} />
-              <HamburgerLine isOpen={isMenuOpen} />
-              <HamburgerLine isOpen={isMenuOpen} />
-            </HamburgerButton>
-            <CartLink href="/cart" aria-label="Shopping cart">
-              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
-              </svg>
-              {itemCount > 0 && <CartBadge>{itemCount}</CartBadge>}
-            </CartLink>
-          </div>
+          <HamburgerButton onClick={toggleMenu} aria-label="Toggle menu" className="mobile-menu">
+            <HamburgerLine isOpen={isMenuOpen} />
+            <HamburgerLine isOpen={isMenuOpen} />
+            <HamburgerLine isOpen={isMenuOpen} />
+          </HamburgerButton>
+          <CartLink href="/cart" aria-label="Shopping cart">
+            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+              <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+            </svg>
+            {itemCount > 0 && <CartBadge>{itemCount}</CartBadge>}
+          </CartLink>
         </RightNav>
         <MobileMenu isOpen={isMenuOpen}>
           <MobileNavLink href="/shop" onClick={closeMenu}>Shop</MobileNavLink>

@@ -277,6 +277,101 @@ const ErrorMessage = styled.div`
   font-size: ${props => props.theme.typography.fontSize.sm};
 `
 
+const ProductListContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${props => props.theme.spacing.md};
+  margin-bottom: ${props => props.theme.spacing.xl};
+`
+
+const ProductListHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: ${props => props.theme.spacing.md};
+`
+
+const ProductListTitle = styled.h2`
+  font-size: ${props => props.theme.typography.fontSize['2xl']};
+  font-weight: ${props => props.theme.typography.fontWeight.bold};
+  color: ${props => props.theme.colors.text};
+`
+
+const ProductListItem = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: ${props => props.theme.spacing.md};
+  background: ${props => props.theme.colors.surface};
+  border-radius: ${props => props.theme.borderRadius.md};
+  border: 1px solid ${props => props.theme.colors.border};
+  gap: ${props => props.theme.spacing.md};
+`
+
+const ProductInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${props => props.theme.spacing.md};
+  flex: 1;
+`
+
+const ProductImage = styled.img`
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: ${props => props.theme.borderRadius.sm};
+  background: white;
+`
+
+const ProductDetails = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${props => props.theme.spacing.xs};
+  flex: 1;
+`
+
+const ProductName = styled.div`
+  font-size: ${props => props.theme.typography.fontSize.base};
+  font-weight: ${props => props.theme.typography.fontWeight.semibold};
+  color: ${props => props.theme.colors.text};
+`
+
+const ProductMeta = styled.div`
+  font-size: ${props => props.theme.typography.fontSize.sm};
+  color: ${props => props.theme.colors.textSecondary};
+`
+
+const ProductActions = styled.div`
+  display: flex;
+  gap: ${props => props.theme.spacing.sm};
+`
+
+const EditButton = styled(Button)`
+  background-color: ${props => props.theme.colors.text};
+  color: ${props => props.theme.colors.background};
+  
+  &:hover {
+    background-color: ${props => props.theme.colors.accent};
+  }
+`
+
+const CancelButton = styled(Button)`
+  background-color: ${props => props.theme.colors.textSecondary};
+  color: ${props => props.theme.colors.background};
+  
+  &:hover {
+    opacity: 0.8;
+  }
+`
+
+const EmptyState = styled.div`
+  padding: ${props => props.theme.spacing.xl};
+  text-align: center;
+  color: ${props => props.theme.colors.textSecondary};
+  background: ${props => props.theme.colors.surface};
+  border-radius: ${props => props.theme.borderRadius.md};
+`
+
 export default function AdminPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
@@ -302,6 +397,10 @@ export default function AdminPage() {
   const [currentSize, setCurrentSize] = useState('')
   const [currentColor, setCurrentColor] = useState('')
   const [uploadingImage, setUploadingImage] = useState(false)
+  const [products, setProducts] = useState([])
+  const [loadingProducts, setLoadingProducts] = useState(false)
+  const [editingProductId, setEditingProductId] = useState(null)
+  const [showForm, setShowForm] = useState(false)
   
   // Check if already authenticated
   useEffect(() => {
@@ -310,6 +409,78 @@ export default function AdminPage() {
       setIsAuthenticated(true)
     }
   }, [])
+
+  // Fetch products when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchProducts()
+    }
+  }, [isAuthenticated])
+
+  const fetchProducts = async () => {
+    setLoadingProducts(true)
+    try {
+      const response = await fetch('/api/products', { cache: 'no-store' })
+      if (response.ok) {
+        const data = await response.json()
+        setProducts(data)
+      }
+    } catch (error) {
+      console.error('Error fetching products:', error)
+    } finally {
+      setLoadingProducts(false)
+    }
+  }
+
+  const handleEdit = (product) => {
+    setEditingProductId(product.id)
+    setFormData({
+      name: product.name || '',
+      description: product.description || '',
+      price: product.price?.toString() || '',
+      category: product.category || 'Tops',
+      stock: product.stock?.toString() || '',
+      featured: product.featured || false,
+      images: product.images || [],
+      sizes: product.sizes || [],
+      colors: product.colors || [],
+    })
+    setShowForm(true)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleAddNew = () => {
+    setEditingProductId(null)
+    setFormData({
+      name: '',
+      description: '',
+      price: '',
+      category: 'Tops',
+      stock: '',
+      featured: false,
+      images: [],
+      sizes: [],
+      colors: [],
+    })
+    setShowForm(true)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const handleCancel = () => {
+    setShowForm(false)
+    setEditingProductId(null)
+    setFormData({
+      name: '',
+      description: '',
+      price: '',
+      category: 'Tops',
+      stock: '',
+      featured: false,
+      images: [],
+      sizes: [],
+      colors: [],
+    })
+  }
   
   const handleLogin = (e) => {
     e.preventDefault()
@@ -353,29 +524,33 @@ export default function AdminPage() {
     const file = e.target.files?.[0]
     if (!file) return
 
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      setMessage({ type: 'error', text: 'Please upload an image file' })
+    // Validate file type - accept PNG and JPG/JPEG
+    const allowedTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp']
+    const fileExtension = file.name.split('.').pop()?.toLowerCase()
+    const allowedExtensions = ['png', 'jpg', 'jpeg', 'webp']
+    
+    if (!allowedTypes.includes(file.type) && !allowedExtensions.includes(fileExtension)) {
+      setMessage({ type: 'error', text: 'Please upload a PNG or JPG image file' })
       return
     }
 
     setUploadingImage(true)
     try {
-      const formData = new FormData()
-      formData.append('file', file)
+      const uploadFormData = new FormData()
+      uploadFormData.append('file', file)
 
       const response = await fetch('/api/upload', {
         method: 'POST',
-        body: formData,
+        body: uploadFormData,
       })
 
       const data = await response.json()
 
       if (response.ok) {
-        setFormData({
-          ...formData,
-          images: [...formData.images, data.url]
-        })
+        setFormData(prev => ({
+          ...prev,
+          images: Array.isArray(prev.images) ? [...prev.images, data.url] : [data.url]
+        }))
         setMessage({ type: 'success', text: 'Image uploaded successfully!' })
         setTimeout(() => setMessage(null), 3000)
       } else {
@@ -392,53 +567,53 @@ export default function AdminPage() {
 
   const addImage = () => {
     if (currentImageUrl.trim()) {
-      setFormData({
-        ...formData,
-        images: [...formData.images, currentImageUrl.trim()]
-      })
+      setFormData(prev => ({
+        ...prev,
+        images: Array.isArray(prev.images) ? [...prev.images, currentImageUrl.trim()] : [currentImageUrl.trim()]
+      }))
       setCurrentImageUrl('')
     }
   }
 
   const removeImage = (index) => {
-    setFormData({
-      ...formData,
-      images: formData.images.filter((_, i) => i !== index)
-    })
+    setFormData(prev => ({
+      ...prev,
+      images: Array.isArray(prev.images) ? prev.images.filter((_, i) => i !== index) : []
+    }))
   }
 
   const addSize = () => {
     if (currentSize.trim()) {
-      setFormData({
-        ...formData,
-        sizes: [...formData.sizes, currentSize.trim()]
-      })
+      setFormData(prev => ({
+        ...prev,
+        sizes: Array.isArray(prev.sizes) ? [...prev.sizes, currentSize.trim()] : [currentSize.trim()]
+      }))
       setCurrentSize('')
     }
   }
 
   const removeSize = (index) => {
-    setFormData({
-      ...formData,
-      sizes: formData.sizes.filter((_, i) => i !== index)
-    })
+    setFormData(prev => ({
+      ...prev,
+      sizes: Array.isArray(prev.sizes) ? prev.sizes.filter((_, i) => i !== index) : []
+    }))
   }
 
   const addColor = () => {
     if (currentColor.trim()) {
-      setFormData({
-        ...formData,
-        colors: [...formData.colors, currentColor.trim()]
-      })
+      setFormData(prev => ({
+        ...prev,
+        colors: Array.isArray(prev.colors) ? [...prev.colors, currentColor.trim()] : [currentColor.trim()]
+      }))
       setCurrentColor('')
     }
   }
 
   const removeColor = (index) => {
-    setFormData({
-      ...formData,
-      colors: formData.colors.filter((_, i) => i !== index)
-    })
+    setFormData(prev => ({
+      ...prev,
+      colors: Array.isArray(prev.colors) ? prev.colors.filter((_, i) => i !== index) : []
+    }))
   }
 
   const handleSubmit = async (e) => {
@@ -451,21 +626,40 @@ export default function AdminPage() {
         ...formData,
         price: parseFloat(formData.price),
         stock: parseInt(formData.stock),
+        images: Array.isArray(formData.images) ? formData.images : [],
+        sizes: Array.isArray(formData.sizes) ? formData.sizes : [],
+        colors: Array.isArray(formData.colors) ? formData.colors : [],
       }
 
-      const response = await fetch('/api/products', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(productData),
-      })
+      let response
+      if (editingProductId) {
+        // Update existing product
+        response = await fetch(`/api/products/${editingProductId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(productData),
+        })
+      } else {
+        // Create new product
+        response = await fetch('/api/products', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(productData),
+        })
+      }
 
       const data = await response.json()
 
       if (response.ok) {
-        setMessage({ type: 'success', text: 'Product added successfully!' })
-        // Reset form
+        setMessage({ 
+          type: 'success', 
+          text: editingProductId ? 'Product updated successfully!' : 'Product added successfully!' 
+        })
+        // Reset form and refresh product list
         setFormData({
           name: '',
           description: '',
@@ -477,11 +671,20 @@ export default function AdminPage() {
           sizes: [],
           colors: [],
         })
+        setEditingProductId(null)
+        setShowForm(false)
+        fetchProducts()
       } else {
-        setMessage({ type: 'error', text: data.error || 'Failed to add product' })
+        setMessage({ 
+          type: 'error', 
+          text: data.error || (editingProductId ? 'Failed to update product' : 'Failed to add product') 
+        })
       }
     } catch (error) {
-      setMessage({ type: 'error', text: 'Error adding product: ' + error.message })
+      setMessage({ 
+        type: 'error', 
+        text: 'Error ' + (editingProductId ? 'updating' : 'adding') + ' product: ' + error.message 
+      })
     } finally {
       setLoading(false)
     }
@@ -490,7 +693,7 @@ export default function AdminPage() {
   return (
     <AdminContainer>
       <AdminHeader>
-        <Title>Admin Panel - Add Product</Title>
+        <Title>Admin Panel</Title>
       </AdminHeader>
 
       {message && (
@@ -499,7 +702,46 @@ export default function AdminPage() {
         </Message>
       )}
 
-      <Form onSubmit={handleSubmit}>
+      <ProductListContainer>
+        <ProductListHeader>
+          <ProductListTitle>Products</ProductListTitle>
+          <Button type="button" onClick={handleAddNew}>
+            Add New Product
+          </Button>
+        </ProductListHeader>
+
+        {loadingProducts ? (
+          <EmptyState>Loading products...</EmptyState>
+        ) : products.length === 0 ? (
+          <EmptyState>No products found. Click "Add New Product" to create one.</EmptyState>
+        ) : (
+          products.map((product) => (
+            <ProductListItem key={product.id}>
+              <ProductInfo>
+                <ProductImage 
+                  src={product.images?.[0] || '/images/products/placeholder.jpg'} 
+                  alt={product.name}
+                />
+                <ProductDetails>
+                  <ProductName>{product.name}</ProductName>
+                  <ProductMeta>
+                    {product.category} • ${product.price} • Stock: {product.stock}
+                    {product.featured && ' • Featured'}
+                  </ProductMeta>
+                </ProductDetails>
+              </ProductInfo>
+              <ProductActions>
+                <EditButton type="button" onClick={() => handleEdit(product)}>
+                  Edit
+                </EditButton>
+              </ProductActions>
+            </ProductListItem>
+          ))
+        )}
+      </ProductListContainer>
+
+      {showForm && (
+        <Form onSubmit={handleSubmit}>
         <FormGroup>
           <Label>Product Name *</Label>
           <Input
@@ -669,10 +911,19 @@ export default function AdminPage() {
           <Label>Featured Product</Label>
         </CheckboxGroup>
 
-        <Button type="submit" disabled={loading}>
-          {loading ? 'Adding Product...' : 'Add Product'}
-        </Button>
-      </Form>
+          <div style={{ display: 'flex', gap: '1rem', justifyContent: 'flex-end' }}>
+            <CancelButton type="button" onClick={handleCancel} disabled={loading}>
+              Cancel
+            </CancelButton>
+            <Button type="submit" disabled={loading}>
+              {loading 
+                ? (editingProductId ? 'Updating Product...' : 'Adding Product...') 
+                : (editingProductId ? 'Update Product' : 'Add Product')
+              }
+            </Button>
+          </div>
+        </Form>
+      )}
     </AdminContainer>
   )
 }
