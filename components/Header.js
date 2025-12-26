@@ -42,8 +42,27 @@ const Logo = styled(Link)`
   transform: translateX(-50%);
   white-space: nowrap;
 
+  .desktop-logo {
+    display: inline;
+  }
+  
+  .mobile-logo {
+    display: none;
+  }
+
   @media (max-width: ${props => props.theme.breakpoints.md}) {
     order: 2;
+    white-space: normal;
+    line-height: 0.9;
+    text-align: center;
+    
+    .desktop-logo {
+      display: none;
+    }
+    
+    .mobile-logo {
+      display: inline;
+    }
   }
 `
 
@@ -360,7 +379,8 @@ export default function Header() {
           </HamburgerButton>
         </Nav>
         <Logo href="/" currentFont={FONT_ARRAY[currentFontIndex]}>
-          SINNERS TESTIMONY<sub style={{ fontSize: '0.4em', verticalAlign: 'sub' }}>®</sub>
+          <span className="desktop-logo">SINNERS TESTIMONY<sub style={{ fontSize: '0.4em', verticalAlign: 'sub' }}>®</sub></span>
+          <span className="mobile-logo">SINNERS<br />TESTIMONY<sub style={{ fontSize: '0.4em', verticalAlign: 'sub' }}>®</sub></span>
         </Logo>
         <RightNav>
           <HamburgerButton onClick={toggleMenu} aria-label="Toggle menu" className="mobile-menu">
