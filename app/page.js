@@ -1,516 +1,119 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import styled from 'styled-components'
-import Link from 'next/link'
 import Image from 'next/image'
-import { useFeaturedProducts } from '@/hooks/useProducts'
 
 const HomeContainer = styled.div`
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: ${props => props.theme.spacing.xl};
-`
-
-const MenuContainer = styled.nav`
+  width: 100%;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  gap: ${props => props.theme.spacing.xl};
-
-  @media (max-width: ${props => props.theme.breakpoints.md}) {
-    align-items: center;
-  }
 `
 
-const MenuTitle = styled.h1`
-  font-size: ${props => props.theme.typography.fontSize['5xl']};
-  font-weight: ${props => props.theme.typography.fontWeight.bold};
-  color: ${props => props.theme.colors.text};
-  margin-top: ${props => props.theme.spacing.xl};
-  margin-bottom: ${props => props.theme.spacing.md};
-  text-align: left;
-  align-self: center;
-  line-height: 0.9;
-  font-family: ${props => props.currentFont || props.theme.typography.fontFamily.sans};
-  transition: font-family 200ms ease-in-out;
-  will-change: font-family;
-  backface-visibility: hidden;
-  -webkit-font-smoothing: antialiased;
-
-  @media (max-width: ${props => props.theme.breakpoints.md}) {
-    font-size: ${props => props.theme.typography.fontSize['3xl']};
-  }
+const Section = styled.section`
+  width: 100%;
+  position: relative;
+  overflow: hidden;
 `
 
-const DescriptionText = styled.p`
-  font-size: ${props => props.theme.typography.fontSize.base};
-  font-weight: ${props => props.theme.typography.fontWeight.medium};
-  text-align: left;
-  color: ${props => props.theme.colors.text};
-  line-height: ${props => props.theme.typography.lineHeight.relaxed};
-  max-width: 600px;
-
-  @media (max-width: ${props => props.theme.breakpoints.md}) {
-    font-size: ${props => props.theme.typography.fontSize.sm};
-    text-align: center;
-  }
-`
-
-const SocialIcons = styled.div`
-  display: flex;
-  gap: ${props => props.theme.spacing.md};
-  align-items: center;
-  justify-content: flex-start;
-  margin-top: ${props => props.theme.spacing.lg};
-
-  @media (max-width: ${props => props.theme.breakpoints.md}) {
-    justify-content: center;
-  }
-`
-
-const SocialIcon = styled.a`
+const MediaContainer = styled.div`
+  width: 100%;
+  min-height: 80vh;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 20px;
-  height: 20px;
-  opacity: 0.5;
-  transition: opacity ${props => props.theme.transitions.fast} ease;
-  
-  &:hover {
-    opacity: 0.8;
-  }
-
-  svg {
-    width: 100%;
-    height: 100%;
-    fill: ${props => props.theme.colors.textSecondary};
-  }
-`
-
-const FooterText = styled.div`
-  position: absolute;
-  bottom: ${props => props.theme.spacing.lg};
-  left: 50%;
-  transform: translateX(-50%);
-  font-size: ${props => props.theme.typography.fontSize.xs};
-  color: ${props => props.theme.colors.textSecondary};
-  text-align: center;
-
-  @media (max-width: ${props => props.theme.breakpoints.md}) {
-    position: absolute;
-    bottom: ${props => props.theme.spacing.lg};
-    left: 50%;
-    transform: translateX(-50%);
-    margin-top: 0;
-  }
-`
-
-const SliderContainer = styled.div`
-  display: none;
-  width: 100%;
-  margin-bottom: ${props => props.theme.spacing.xl};
-  overflow: hidden;
-
-  @media (max-width: ${props => props.theme.breakpoints.md}) {
-    display: block;
-  }
-`
-
-const SliderWrapper = styled.div`
-  position: relative;
-  width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scroll-snap-type: x mandatory;
-  scroll-behavior: smooth;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
-`
-
-const SliderTrack = styled.div`
-  display: flex;
-  gap: ${props => props.theme.spacing.md};
-  width: max-content;
-`
-
-const Slide = styled.div`
-  flex: 0 0 calc(100vw - ${props => props.theme.spacing.xl * 2});
-  scroll-snap-align: start;
-  position: relative;
-  aspect-ratio: 4 / 3;
-  border-radius: ${props => props.theme.borderRadius.md};
-  overflow: hidden;
   background-color: ${props => props.theme.colors.surface};
+  
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    min-height: 60vh;
+  }
 `
 
-const SlideImage = styled.div`
-  position: relative;
+const MediaPlaceholder = styled.div`
   width: 100%;
   height: 100%;
-`
-
-const SlideContent = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: ${props => props.theme.spacing.md};
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
-  color: ${props => props.theme.colors.background};
-`
-
-const SlideTitle = styled.h3`
-  font-size: ${props => props.theme.typography.fontSize.lg};
-  font-weight: ${props => props.theme.typography.fontWeight.semibold};
-  margin-bottom: ${props => props.theme.spacing.xs};
-`
-
-const SlidePrice = styled.div`
-  font-size: ${props => props.theme.typography.fontSize.base};
-  font-weight: ${props => props.theme.typography.fontWeight.medium};
-`
-
-const DateTimeStamp = styled.div`
-  font-size: ${props => props.theme.typography.fontSize.xs};
-  color: ${props => props.theme.colors.textSecondary};
-  text-align: center;
-  margin-top: ${props => props.theme.spacing.xs};
-  font-weight: ${props => props.theme.typography.fontWeight.normal};
-  letter-spacing: 0.05em;
   display: flex;
-  flex-direction: column;
-  gap: ${props => props.theme.spacing.xs};
-  align-self: center;
-  width: 100%;
-`
-
-const DateTimeText = styled.div`
-  display: flex;
-  gap: ${props => props.theme.spacing.sm};
-  justify-content: center;
   align-items: center;
-`
-
-const Counter = styled.span`
-  font-weight: ${props => props.theme.typography.fontWeight.medium};
-  color: ${props => props.theme.colors.text};
-`
-
-const SubscriptionContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${props => props.theme.spacing.sm};
-  margin-top: ${props => props.theme.spacing.lg};
-  width: 100%;
-
-  @media (max-width: ${props => props.theme.breakpoints.md}) {
-    align-items: center;
+  justify-content: center;
+  background-color: ${props => props.theme.colors.surface};
+  color: ${props => props.theme.colors.textSecondary};
+  font-size: ${props => props.theme.typography.fontSize.lg};
+  
+  img, video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 `
 
-const SubscriptionForm = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: ${props => props.theme.spacing.sm};
-  align-items: stretch;
-`
-
-const EmailInput = styled.input`
-  flex: 1;
-  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
-  font-size: ${props => props.theme.typography.fontSize.base};
-  font-weight: ${props => props.theme.typography.fontWeight.medium};
-  border: 1px solid ${props => props.theme.colors.border};
-  border-radius: ${props => props.theme.borderRadius.xl};
-  background-color: ${props => props.theme.colors.background};
-  color: ${props => props.theme.colors.text};
-  transition: border-color ${props => props.theme.transitions.normal} ease;
-  font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  text-align: left;
-
-  &:focus {
-    outline: none;
-    border-color: ${props => props.theme.colors.accent};
-  }
-
-  &::placeholder {
-    color: ${props => props.theme.colors.textSecondary};
-    opacity: 0.6;
-    font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  }
-`
-
-const SubscribeButton = styled.button`
-  padding: ${props => props.theme.spacing.sm} ${props => props.theme.spacing.md};
-  font-size: ${props => props.theme.typography.fontSize.base};
-  font-weight: ${props => props.theme.typography.fontWeight.medium};
-  color: ${props => props.theme.colors.background};
-  background-color: ${props => props.theme.colors.text};
-  border: 1px solid ${props => props.theme.colors.text};
-  border-radius: ${props => props.theme.borderRadius.xl};
-  cursor: pointer;
-  transition: all ${props => props.theme.transitions.normal} ease;
-  font-family: 'Satoshi', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+const PlaceholderText = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   text-align: center;
-
-  &:hover {
-    background-color: ${props => props.theme.colors.accent};
-    border-color: ${props => props.theme.colors.accent};
-    color: ${props => props.theme.colors.background};
-  }
-
-  &:active {
-    transform: scale(0.98);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
+  color: ${props => props.theme.colors.textSecondary};
+  font-size: ${props => props.theme.typography.fontSize.base};
+  z-index: 1;
 `
-
-const SubscriptionMessage = styled.div`
-  font-size: ${props => props.theme.typography.fontSize['2xl']};
-  font-weight: ${props => props.theme.typography.fontWeight.medium};
-  color: ${props => props.status === 'success' ? props.theme.colors.success : props.theme.colors.error};
-  margin-top: ${props => props.theme.spacing.xs};
-  text-align: left;
-`
-
-// Array of fonts to cycle through (mix of web-safe and Google Fonts)
-const FONT_ARRAY = [
-  'Impact',
-  'Arial Black',
-  'Bebas Neue',
-  'Oswald',
-  'Anton',
-  'Bangers',
-  'Black Ops One',
-  'Creepster',
-  'Russo One',
-  'Orbitron',
-  'Rajdhani',
-  'Righteous',
-  'Fredoka One',
-  'Lilita One',
-  'Passion One',
-  'Staatliches',
-  'Changa One',
-  'Comfortaa',
-  'Josefin Sans',
-  'Montserrat',
-  'Raleway',
-  'Roboto',
-  'Open Sans',
-  'Lato',
-  'Poppins',
-  'Ubuntu',
-  'Playfair Display',
-  'Merriweather',
-  'Lora',
-  'Crimson Text',
-  'Libre Baskerville',
-  'PT Serif',
-  'Source Serif Pro',
-  'Arvo',
-  'Roboto Slab',
-  'Oxygen',
-  'Quicksand',
-  'Nunito',
-  'Work Sans',
-  'Inter',
-  'DM Sans',
-  'Space Grotesk',
-  'Syne',
-  'Archivo',
-  'Manrope',
-  'Georgia',
-  'Courier New',
-  'Verdana',
-  'Times New Roman',
-  'Trebuchet MS',
-  'Satoshi' // Final font (theme font)
-]
 
 export default function HomePage() {
-  const { products: featuredProducts, loading } = useFeaturedProducts()
-  const [dateTime, setDateTime] = useState({ date: '', time: '', counter: 0 })
-  const [email, setEmail] = useState('')
-  const [subscriptionStatus, setSubscriptionStatus] = useState(null) // 'success', 'error', or null
-  
-  // Font animation state
-  const [currentFontIndex, setCurrentFontIndex] = useState(0)
-
-  // Font animation effect - continuous loop
-  useEffect(() => {
-    const fontInterval = setInterval(() => {
-      setCurrentFontIndex((prevIndex) => {
-        const nextIndex = prevIndex + 1
-        
-        // Loop back to start when reaching the end
-        if (nextIndex >= FONT_ARRAY.length) {
-          return 0
-        }
-        
-        return nextIndex
-      })
-    }, 300) // Slower speed: 300ms per font for smoother transitions
-
-    return () => clearInterval(fontInterval)
-  }, [])
-
-  useEffect(() => {
-    const startTime = Date.now()
-    
-    const updateDateTime = () => {
-      const now = new Date()
-      const elapsed = Math.floor((Date.now() - startTime) / 1000) // seconds since page load
-      
-      const dateOptions = { 
-        month: 'short', 
-        day: 'numeric', 
-        year: 'numeric'
-      }
-      
-      const timeOptions = {
-        hour: '2-digit', 
-        minute: '2-digit',
-        second: '2-digit',
-        hour12: true
-      }
-      
-      setDateTime({
-        date: now.toLocaleDateString('en-US', dateOptions),
-        time: now.toLocaleTimeString('en-US', timeOptions),
-        counter: elapsed
-      })
+  // Placeholder data for sections - can be replaced with actual media URLs
+  const sections = [
+    {
+      id: 1,
+      type: 'image', // 'image' or 'video'
+      src: null, // Add image/video URL here when available
+      placeholder: 'Section 1 - Image/Video Placeholder'
+    },
+    {
+      id: 2,
+      type: 'image',
+      src: null,
+      placeholder: 'Section 2 - Image/Video Placeholder'
+    },
+    {
+      id: 3,
+      type: 'image',
+      src: null,
+      placeholder: 'Section 3 - Image/Video Placeholder'
     }
-
-    updateDateTime()
-    const interval = setInterval(updateDateTime, 1000) // Update every second
-
-    return () => clearInterval(interval)
-  }, [])
-
-  const handleSubscribe = async (e) => {
-    e.preventDefault()
-    
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!emailRegex.test(email)) {
-      setSubscriptionStatus('error')
-      return
-    }
-
-    // Here you would typically send the email to your backend/email service
-    // For now, we'll just simulate a successful subscription
-    try {
-      // TODO: Replace with actual API call to your email service
-      // await fetch('/api/subscribe', { method: 'POST', body: JSON.stringify({ email }) })
-      
-      console.log('Subscribed email:', email)
-      setSubscriptionStatus('success')
-      setEmail('')
-      
-      // Reset success message after 3 seconds
-      setTimeout(() => {
-        setSubscriptionStatus(null)
-      }, 3000)
-    } catch (error) {
-      setSubscriptionStatus('error')
-    }
-  }
+  ]
 
   return (
     <HomeContainer>
-      <MenuContainer>
-        {!loading && featuredProducts.length > 0 && (
-          <SliderContainer>
-            <SliderWrapper>
-              <SliderTrack>
-                {featuredProducts.map((product) => (
-                  <Slide key={product.id}>
-                    <Link href={`/shop/${product.id}`} style={{ display: 'block', width: '100%', height: '100%' }}>
-                      <SlideImage>
-                        <Image
-                          src={product.images[0] || '/images/products/placeholder.jpg'}
-                          alt={product.name}
-                          fill
-                          style={{ objectFit: 'cover' }}
-                          sizes="100vw"
-                        />
-                      </SlideImage>
-                    </Link>
-                  </Slide>
-                ))}
-              </SliderTrack>
-            </SliderWrapper>
-          </SliderContainer>
-        )}
-        <MenuTitle currentFont={FONT_ARRAY[currentFontIndex]}>
-          SINNERS<br />TESTIMONY<sub style={{ fontSize: '0.4em', verticalAlign: 'sub' }}>®</sub>
-        </MenuTitle>
-        {dateTime.date && (
-          <DateTimeStamp>
-            <DateTimeText>
-              <span>{dateTime.date}</span>
-              <span>{dateTime.time}</span>
-            </DateTimeText>
-          </DateTimeStamp>
-        )}
-        <DescriptionText>
-          Handcrafted. Not manufactured. Each piece is made by hand, one at a time. Every detail matters. Every stitch is intentional. This is clothing designed to be unique. Built to be yours alone.
-        </DescriptionText>
-        <SubscriptionContainer>
-          <SubscriptionForm onSubmit={handleSubscribe}>
-            <EmailInput
-              id="email-subscribe"
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <SubscribeButton type="submit">
-              Subscribe
-            </SubscribeButton>
-          </SubscriptionForm>
-          {subscriptionStatus && (
-            <SubscriptionMessage status={subscriptionStatus}>
-              {subscriptionStatus === 'success' 
-                ? 'Thank you for subscribing!' 
-                : 'Please enter a valid email address.'}
-            </SubscriptionMessage>
-          )}
-        </SubscriptionContainer>
-        <SocialIcons>
-          <SocialIcon href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-            </svg>
-          </SocialIcon>
-          <SocialIcon href="https://twitter.com" target="_blank" rel="noopener noreferrer" aria-label="Twitter">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/>
-            </svg>
-          </SocialIcon>
-          <SocialIcon href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
-            </svg>
-          </SocialIcon>
-        </SocialIcons>
-      </MenuContainer>
-      <FooterText>© Sinners Testimony 2026</FooterText>
+      {sections.map((section) => (
+        <Section key={section.id}>
+          <MediaContainer>
+            <MediaPlaceholder>
+              {section.src ? (
+                section.type === 'video' ? (
+                  <video 
+                    src={section.src} 
+                    autoPlay 
+                    loop 
+                    muted 
+                    playsInline
+                    style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                  />
+                ) : (
+                  <Image
+                    src={section.src}
+                    alt={`Section ${section.id}`}
+                    fill
+                    style={{ objectFit: 'cover' }}
+                    sizes="100vw"
+                    priority={section.id === 1}
+                  />
+                )
+              ) : (
+                <PlaceholderText>{section.placeholder}</PlaceholderText>
+              )}
+            </MediaPlaceholder>
+          </MediaContainer>
+        </Section>
+      ))}
     </HomeContainer>
   )
 }

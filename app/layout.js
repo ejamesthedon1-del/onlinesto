@@ -42,9 +42,9 @@ export default function RootLayout({ children }) {
           <StylesProvider>
             <CartProvider>
               <PageContainer>
-                {!isHomePage && <Header />}
+                <Header />
                 <MainContent>{children}</MainContent>
-                {!isHomePage && <Footer />}
+                <Footer />
               </PageContainer>
             </CartProvider>
           </StylesProvider>
