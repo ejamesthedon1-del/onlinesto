@@ -37,6 +37,13 @@ const ProductInfo = styled.div`
   gap: ${props => props.theme.spacing.lg};
 `
 
+const ProductHeader = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${props => props.theme.spacing.xs};
+  margin-bottom: ${props => props.theme.spacing.sm};
+`
+
 const ProductCategory = styled.span`
   font-size: ${props => props.theme.typography.fontSize.sm};
   color: ${props => props.theme.colors.textSecondary};
@@ -96,7 +103,7 @@ const NotFoundState = styled.div`
 const SizeSelector = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${props => props.theme.spacing.sm};
+  gap: ${props => props.theme.spacing.xs};
   margin-top: ${props => props.theme.spacing.xs};
 `
 
@@ -209,9 +216,10 @@ export default function ProductDetailPage({ params }) {
       <ProductContainer>
         <ImageGallery images={product.images} />
         <ProductInfo>
-          <ProductCategory>{product.category}</ProductCategory>
-          <ProductName>{product.name}</ProductName>
-          <PriceDisplay price={product.price} size="large" />
+          <ProductHeader>
+            <ProductName>{product.name}</ProductName>
+            <PriceDisplay price={product.price} size="large" />
+          </ProductHeader>
           <SizeSelector>
             <SizeLabel>Size</SizeLabel>
             <SizeGrid>

@@ -71,6 +71,7 @@ const CategoryIconMenu = styled.div`
   gap: ${props => props.theme.spacing.xl};
   margin-bottom: ${props => props.theme.spacing.lg};
   padding: ${props => props.theme.spacing.md} 0;
+  position: relative;
 
   @media (max-width: ${props => props.theme.breakpoints.md}) {
     gap: ${props => props.theme.spacing.lg};
@@ -121,6 +122,38 @@ const IconLabel = styled.span`
   font-weight: ${props => props.active ? props.theme.typography.fontWeight.medium : props.theme.typography.fontWeight.normal};
 `
 
+const ViewToggle = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: ${props => props.theme.spacing.sm};
+  margin-bottom: ${props => props.theme.spacing.lg};
+`
+
+const ViewButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  background: ${props => props.active ? props.theme.colors.text : 'transparent'};
+  border: 1px solid ${props => props.theme.colors.border};
+  border-radius: ${props => props.theme.borderRadius.md};
+  cursor: pointer;
+  transition: all ${props => props.theme.transitions.fast} ease;
+  
+  svg {
+    width: 20px;
+    height: 20px;
+    stroke: ${props => props.active ? props.theme.colors.background : props.theme.colors.text};
+    fill: ${props => props.active ? props.theme.colors.background : 'none'};
+  }
+  
+  &:hover {
+    border-color: ${props => props.theme.colors.text};
+  }
+`
+
 const categories = [
   { value: '', label: 'Shop all' },
   { value: 'Tops', label: 'Tops' },
@@ -140,6 +173,7 @@ export default function ShopPage() {
   const { addToCart } = useCart()
   const [categoryFilter, setCategoryFilter] = useState('')
   const [sortBy, setSortBy] = useState('name-asc')
+  const [viewMode, setViewMode] = useState('grid') // 'grid' for 2-row, 'single' for single row
 
   const handleQuickAdd = (product) => {
     addToCart(product, { quantity: 1 })
@@ -172,88 +206,35 @@ export default function ShopPage() {
           {error && <ErrorState>Error loading products: {error}</ErrorState>}
           {!loading && !error && (
             <>
-              <CategoryIconMenu>
-                <CategoryIconButton 
-                  onClick={() => setCategoryFilter('')}
-                  active={categoryFilter === ''}
-                  aria-label="Show all products"
+              <ViewToggle>
+                <ViewButton 
+                  active={viewMode === 'grid'}
+                  onClick={() => setViewMode('grid')}
+                  aria-label="Grid view"
                 >
-                  <IconWrapper active={categoryFilter === ''}>
-                    <Image 
-                      src="/images/icons/all.png" 
-                      alt="All products"
-                      width={24}
-                      height={24}
-                      onError={(e) => {
-                        // Fallback to SVG if image doesn't exist
-                        e.target.style.display = 'none'
-                        e.target.nextSibling.style.display = 'block'
-                      }}
-                    />
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg" style={{ display: 'none' }}>
-                      <rect x="3" y="3" width="7" height="7"/>
-                      <rect x="14" y="3" width="7" height="7"/>
-                      <rect x="3" y="14" width="7" height="7"/>
-                      <rect x="14" y="14" width="7" height="7"/>
-                    </svg>
-                  </IconWrapper>
-                  <IconLabel active={categoryFilter === ''}>All</IconLabel>
-                </CategoryIconButton>
-                <CategoryIconButton 
-                  onClick={() => setCategoryFilter('Tops')}
-                  active={categoryFilter === 'Tops'}
-                  aria-label="Show tops"
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="3" width="7" height="7"/>
+                    <rect x="14" y="3" width="7" height="7"/>
+                    <rect x="3" y="14" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/>
+                  </svg>
+                </ViewButton>
+                <ViewButton 
+                  active={viewMode === 'single'}
+                  onClick={() => setViewMode('single')}
+                  aria-label="Single row view"
                 >
-                  <IconWrapper active={categoryFilter === 'Tops'}>
-                    <Image 
-                      src="/images/icons/tops.png" 
-                      alt="Tops"
-                      width={24}
-                      height={24}
-                      onError={(e) => {
-                        e.target.style.display = 'none'
-                        e.target.nextSibling.style.display = 'block'
-                      }}
-                    />
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg" style={{ display: 'none' }}>
-                      <path d="M6 3H18C19.1 3 20 3.9 20 5V7H4V5C4 3.9 4.9 3 6 3Z"/>
-                      <path d="M4 7V19C4 20.1 4.9 21 6 21H18C19.1 21 20 20.1 20 19V7H4Z"/>
-                      <path d="M8 7V3H16V7"/>
-                      <path d="M8 11H16"/>
-                    </svg>
-                  </IconWrapper>
-                  <IconLabel active={categoryFilter === 'Tops'}>Tops</IconLabel>
-                </CategoryIconButton>
-                <CategoryIconButton 
-                  onClick={() => setCategoryFilter('Bottoms')}
-                  active={categoryFilter === 'Bottoms'}
-                  aria-label="Show bottoms"
-                >
-                  <IconWrapper active={categoryFilter === 'Bottoms'}>
-                    <Image 
-                      src="/images/icons/bottoms.png" 
-                      alt="Bottoms"
-                      width={24}
-                      height={24}
-                      onError={(e) => {
-                        e.target.style.display = 'none'
-                        e.target.nextSibling.style.display = 'block'
-                      }}
-                    />
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg" style={{ display: 'none' }}>
-                      <path d="M7 4H17C18.1 4 19 4.9 19 6V9H5V6C5 4.9 5.9 4 7 4Z"/>
-                      <path d="M5 9V20C5 21.1 5.9 22 7 22H17C18.1 22 19 21.1 19 20V9H5Z"/>
-                      <path d="M9 9V12H15V9"/>
-                      <path d="M9 18H15"/>
-                    </svg>
-                  </IconWrapper>
-                  <IconLabel active={categoryFilter === 'Bottoms'}>Bottoms</IconLabel>
-                </CategoryIconButton>
-              </CategoryIconMenu>
+                  <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="3" y="3" width="18" height="7"/>
+                    <rect x="3" y="14" width="18" height="7"/>
+                  </svg>
+                </ViewButton>
+              </ViewToggle>
               <ProductGrid 
                 products={filteredProducts} 
                 onQuickAdd={handleQuickAdd}
                 emptyMessage="No products found matching your criteria."
+                viewMode={viewMode}
               />
             </>
           )}
