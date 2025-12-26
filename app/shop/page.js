@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import styled from 'styled-components'
+import Image from 'next/image'
 import { useProducts } from '@/hooks/useProducts'
 import { useCart } from '@/hooks/useCart'
 import ProductGrid from '@/components/ProductGrid'
@@ -106,6 +107,12 @@ const IconWrapper = styled.div`
   ${CategoryIconButton}:hover & {
     border-color: ${props => props.theme.colors.text};
   }
+  
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
 `
 
 const IconLabel = styled.span`
@@ -172,11 +179,22 @@ export default function ShopPage() {
                   aria-label="Show all products"
                 >
                   <IconWrapper active={categoryFilter === ''}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <rect x="3" y="3" width="7" height="7" stroke="currentColor" strokeWidth="2" fill="none"/>
-                      <rect x="14" y="3" width="7" height="7" stroke="currentColor" strokeWidth="2" fill="none"/>
-                      <rect x="3" y="14" width="7" height="7" stroke="currentColor" strokeWidth="2" fill="none"/>
-                      <rect x="14" y="14" width="7" height="7" stroke="currentColor" strokeWidth="2" fill="none"/>
+                    <Image 
+                      src="/images/icons/all.png" 
+                      alt="All products"
+                      width={24}
+                      height={24}
+                      onError={(e) => {
+                        // Fallback to SVG if image doesn't exist
+                        e.target.style.display = 'none'
+                        e.target.nextSibling.style.display = 'block'
+                      }}
+                    />
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg" style={{ display: 'none' }}>
+                      <rect x="3" y="3" width="7" height="7"/>
+                      <rect x="14" y="3" width="7" height="7"/>
+                      <rect x="3" y="14" width="7" height="7"/>
+                      <rect x="14" y="14" width="7" height="7"/>
                     </svg>
                   </IconWrapper>
                   <IconLabel active={categoryFilter === ''}>All</IconLabel>
@@ -187,11 +205,21 @@ export default function ShopPage() {
                   aria-label="Show tops"
                 >
                   <IconWrapper active={categoryFilter === 'Tops'}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M6 4H18C19.1 4 20 4.9 20 6V8H4V6C4 4.9 4.9 4 6 4Z" stroke="currentColor" strokeWidth="2" fill="none"/>
-                      <path d="M4 8V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V8" stroke="currentColor" strokeWidth="2" fill="none"/>
-                      <path d="M8 12H16" stroke="currentColor" strokeWidth="2"/>
-                      <path d="M10 8V12M14 8V12" stroke="currentColor" strokeWidth="2"/>
+                    <Image 
+                      src="/images/icons/tops.png" 
+                      alt="Tops"
+                      width={24}
+                      height={24}
+                      onError={(e) => {
+                        e.target.style.display = 'none'
+                        e.target.nextSibling.style.display = 'block'
+                      }}
+                    />
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg" style={{ display: 'none' }}>
+                      <path d="M6 3H18C19.1 3 20 3.9 20 5V7H4V5C4 3.9 4.9 3 6 3Z"/>
+                      <path d="M4 7V19C4 20.1 4.9 21 6 21H18C19.1 21 20 20.1 20 19V7H4Z"/>
+                      <path d="M8 7V3H16V7"/>
+                      <path d="M8 11H16"/>
                     </svg>
                   </IconWrapper>
                   <IconLabel active={categoryFilter === 'Tops'}>Tops</IconLabel>
@@ -202,11 +230,21 @@ export default function ShopPage() {
                   aria-label="Show bottoms"
                 >
                   <IconWrapper active={categoryFilter === 'Bottoms'}>
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                      <path d="M6 4H18C19.1 4 20 4.9 20 6V10H4V6C4 4.9 4.9 4 6 4Z" stroke="currentColor" strokeWidth="2" fill="none"/>
-                      <path d="M4 10V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V10" stroke="currentColor" strokeWidth="2" fill="none"/>
-                      <path d="M8 14H16" stroke="currentColor" strokeWidth="2"/>
-                      <path d="M10 18H14" stroke="currentColor" strokeWidth="2"/>
+                    <Image 
+                      src="/images/icons/bottoms.png" 
+                      alt="Bottoms"
+                      width={24}
+                      height={24}
+                      onError={(e) => {
+                        e.target.style.display = 'none'
+                        e.target.nextSibling.style.display = 'block'
+                      }}
+                    />
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="black" xmlns="http://www.w3.org/2000/svg" style={{ display: 'none' }}>
+                      <path d="M7 4H17C18.1 4 19 4.9 19 6V9H5V6C5 4.9 5.9 4 7 4Z"/>
+                      <path d="M5 9V20C5 21.1 5.9 22 7 22H17C18.1 22 19 21.1 19 20V9H5Z"/>
+                      <path d="M9 9V12H15V9"/>
+                      <path d="M9 18H15"/>
                     </svg>
                   </IconWrapper>
                   <IconLabel active={categoryFilter === 'Bottoms'}>Bottoms</IconLabel>

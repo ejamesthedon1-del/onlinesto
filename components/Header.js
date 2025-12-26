@@ -6,13 +6,9 @@ import Link from 'next/link'
 import { useCart } from '@/hooks/useCart'
 
 const HeaderContainer = styled.header`
-  background-color: ${props => props.theme.colors.background};
   padding: ${props => props.theme.spacing.md} 0;
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 100;
-  backdrop-filter: blur(10px);
-  background-color: ${props => props.theme.colors.background}dd;
 `
 
 const HeaderContent = styled.div`
@@ -109,7 +105,7 @@ const NavLink = styled(Link)`
 
 const ShopButton = styled.button`
   font-size: ${props => props.theme.typography.fontSize.base};
-  font-weight: ${props => props.theme.typography.fontWeight.medium};
+  font-weight: ${props => props.theme.typography.fontWeight.bold};
   color: ${props => props.theme.colors.text};
   background: none;
   border: none;
@@ -117,6 +113,7 @@ const ShopButton = styled.button`
   padding: 0;
   transition: color ${props => props.theme.transitions.fast} ease;
   position: relative;
+  text-transform: uppercase;
 
   &:hover {
     color: ${props => props.theme.colors.accent};
