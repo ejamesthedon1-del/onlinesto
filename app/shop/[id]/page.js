@@ -11,23 +11,68 @@ import Select from '@/components/Select'
 import Link from 'next/link'
 
 const PageContainer = styled.div`
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: ${props => props.theme.spacing.xl} ${props => props.theme.spacing.lg};
+  width: 100%;
+  position: relative;
 `
 
 const ProductContainer = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: ${props => props.theme.spacing['2xl']};
-
-  @media (max-width: ${props => props.theme.breakpoints.md}) {
-    grid-template-columns: 1fr;
-  }
+  display: flex;
+  position: relative;
+  min-height: 100vh;
   
-  @media (min-width: 1200px) {
-    grid-template-columns: 1080px 1fr;
-    justify-content: center;
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    flex-direction: column;
+  }
+`
+
+const ImageSection = styled.div`
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  width: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${props => props.theme.colors.background};
+  z-index: 1;
+  overflow: hidden;
+  
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    position: relative;
+    width: 100%;
+    height: 60vh;
+    min-height: 60vh;
+  }
+`
+
+const ImageWrapper = styled.div`
+  width: 100%;
+  max-width: 1080px;
+  padding: ${props => props.theme.spacing.xl};
+  
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    padding: ${props => props.theme.spacing.lg};
+  }
+`
+
+const ContentSection = styled.div`
+  width: 50%;
+  position: relative;
+  z-index: 2;
+  background-color: ${props => props.theme.colors.background};
+  
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    width: 100%;
+  }
+`
+
+const ContentWrapper = styled.div`
+  max-width: 600px;
+  margin: 0 auto;
+  padding: ${props => props.theme.spacing.xl} ${props => props.theme.spacing.lg};
+  
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    padding: ${props => props.theme.spacing.lg};
   }
 `
 
@@ -214,69 +259,77 @@ export default function ProductDetailPage({ params }) {
   return (
     <PageContainer>
       <ProductContainer>
-        <ImageGallery images={product.images} />
-        <ProductInfo>
-          <ProductHeader>
-            <ProductName>{product.name}</ProductName>
-            <PriceDisplay price={product.price} size="large" />
-          </ProductHeader>
-          <SizeSelector>
-            <SizeLabel>Size</SizeLabel>
-            <SizeGrid>
-              {standardSizes.map((size) => {
-                const available = isSizeAvailable(size)
-                const isSelected = selectedSize === size
-                return (
-                  <SizeButton
-                    key={size}
-                    available={available}
-                    selected={isSelected}
-                    onClick={() => available && setSelectedSize(size)}
-                    disabled={!available}
-                    type="button"
-                  >
-                    {size}
-                  </SizeButton>
-                )
-              })}
-            </SizeGrid>
-          </SizeSelector>
-          <ProductDescription>{product.description}</ProductDescription>
-          
-          <ProductDetails>
-            {product.colors && product.colors.length > 0 && (
-              <DetailRow>
-                <Select
-                  label="Color"
-                  value={selectedColor}
-                  onChange={(e) => setSelectedColor(e.target.value)}
-                  options={colorOptions}
-                  placeholder="Select a color"
-                />
-              </DetailRow>
-            )}
-            
-            <DetailRow>
-              <Select
-                label="Quantity"
-                value={quantity.toString()}
-                onChange={(e) => setQuantity(parseInt(e.target.value))}
-                options={quantityOptions}
-              />
-            </DetailRow>
-          </ProductDetails>
+        <ImageSection>
+          <ImageWrapper>
+            <ImageGallery images={product.images} />
+          </ImageWrapper>
+        </ImageSection>
+        <ContentSection>
+          <ContentWrapper>
+            <ProductInfo>
+              <ProductHeader>
+                <ProductName>{product.name}</ProductName>
+                <PriceDisplay price={product.price} size="large" />
+              </ProductHeader>
+              <SizeSelector>
+                <SizeLabel>Size</SizeLabel>
+                <SizeGrid>
+                  {standardSizes.map((size) => {
+                    const available = isSizeAvailable(size)
+                    const isSelected = selectedSize === size
+                    return (
+                      <SizeButton
+                        key={size}
+                        available={available}
+                        selected={isSelected}
+                        onClick={() => available && setSelectedSize(size)}
+                        disabled={!available}
+                        type="button"
+                      >
+                        {size}
+                      </SizeButton>
+                    )
+                  })}
+                </SizeGrid>
+              </SizeSelector>
+              <ProductDescription>{product.description}</ProductDescription>
+              
+              <ProductDetails>
+                {product.colors && product.colors.length > 0 && (
+                  <DetailRow>
+                    <Select
+                      label="Color"
+                      value={selectedColor}
+                      onChange={(e) => setSelectedColor(e.target.value)}
+                      options={colorOptions}
+                      placeholder="Select a color"
+                    />
+                  </DetailRow>
+                )}
+                
+                <DetailRow>
+                  <Select
+                    label="Quantity"
+                    value={quantity.toString()}
+                    onChange={(e) => setQuantity(parseInt(e.target.value))}
+                    options={quantityOptions}
+                  />
+                </DetailRow>
+              </ProductDetails>
 
-          <ActionsContainer>
-            <Button size="large" fullWidth onClick={handleAddToCart}>
-              Add to Cart
-            </Button>
-            <Link href="/shop">
-              <Button variant="outline" fullWidth>
-                Continue Shopping
-              </Button>
-            </Link>
-          </ActionsContainer>
-        </ProductInfo>
+              <ActionsContainer>
+                <Button size="large" fullWidth onClick={handleAddToCart}>
+                  Add to Cart
+                </Button>
+                <Link href="/shop">
+                  <Button variant="outline" fullWidth>
+                    Continue Shopping
+                  </Button>
+                </Link>
+              </ActionsContainer>
+            </ProductInfo>
+          </ContentWrapper>
+        </ContentSection>
       </ProductContainer>
     </PageContainer>
   )

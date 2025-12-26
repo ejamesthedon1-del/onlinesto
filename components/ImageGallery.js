@@ -6,6 +6,8 @@ const GalleryContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${props => props.theme.spacing.md};
+  height: 100%;
+  width: 100%;
 `
 
 const MainImageContainer = styled.div`
@@ -19,6 +21,7 @@ const MainImageContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  flex: 1;
 `
 
 const MainImageWrapper = styled.div`
