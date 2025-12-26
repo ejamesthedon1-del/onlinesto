@@ -186,7 +186,7 @@ const HamburgerButton = styled.button`
   @media (max-width: ${props => props.theme.breakpoints.md}) {
     display: flex;
     
-    &.mobile-menu-right {
+    &.mobile-menu {
       display: none;
     }
   }

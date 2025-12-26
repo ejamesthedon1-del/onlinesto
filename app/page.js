@@ -101,11 +101,11 @@ const FooterText = styled.div`
   text-align: center;
 
   @media (max-width: ${props => props.theme.breakpoints.md}) {
-    position: relative;
-    bottom: auto;
-    left: auto;
-    transform: none;
-    margin-top: ${props => props.theme.spacing.xl};
+    position: absolute;
+    bottom: ${props => props.theme.spacing.lg};
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 0;
   }
 `
 
