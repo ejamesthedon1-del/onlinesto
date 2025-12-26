@@ -118,10 +118,6 @@ const ShopButton = styled.button`
   &:hover {
     color: ${props => props.theme.colors.accent};
   }
-
-  @media (max-width: ${props => props.theme.breakpoints.md}) {
-    display: none;
-  }
 `
 
 const Submenu = styled.div`
@@ -315,7 +311,6 @@ const FONT_ARRAY = [
 
 export default function Header() {
   const { itemCount } = useCart()
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isShopMenuOpen, setIsShopMenuOpen] = useState(false)
   const [currentFontIndex, setCurrentFontIndex] = useState(0)
 
@@ -333,14 +328,6 @@ export default function Header() {
 
     return () => clearInterval(fontInterval)
   }, [])
-
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen)
-  }
-
-  const closeMenu = () => {
-    setIsMenuOpen(false)
-  }
 
   const openShopMenu = () => {
     setIsShopMenuOpen(true)
@@ -369,22 +356,12 @@ export default function Header() {
               <SubmenuLink href="/shop?category=Outerwear" onClick={closeShopMenu}>Outerwear</SubmenuLink>
             </Submenu>
           </div>
-          <HamburgerButton onClick={toggleMenu} aria-label="Toggle menu">
-            <HamburgerLine isOpen={isMenuOpen} />
-            <HamburgerLine isOpen={isMenuOpen} />
-            <HamburgerLine isOpen={isMenuOpen} />
-          </HamburgerButton>
         </Nav>
         <Logo href="/" currentFont={FONT_ARRAY[currentFontIndex]}>
           <span className="desktop-logo">SINNERS TESTIMONY<sub style={{ fontSize: '0.4em', verticalAlign: 'sub' }}>®</sub></span>
           <span className="mobile-logo">SINNERS<br />TESTIMONY<sub style={{ fontSize: '0.4em', verticalAlign: 'sub' }}>®</sub></span>
         </Logo>
         <RightNav>
-          <HamburgerButton onClick={toggleMenu} aria-label="Toggle menu" className="mobile-menu">
-            <HamburgerLine isOpen={isMenuOpen} />
-            <HamburgerLine isOpen={isMenuOpen} />
-            <HamburgerLine isOpen={isMenuOpen} />
-          </HamburgerButton>
           <CartLink href="/cart" aria-label="Shopping cart">
             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <path d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12L8.1 13h7.45c.75 0 1.41-.41 1.75-1.03L21.7 4H5.21l-.94-2H1zm16 16c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
@@ -392,9 +369,6 @@ export default function Header() {
             {itemCount > 0 && <CartBadge>{itemCount}</CartBadge>}
           </CartLink>
         </RightNav>
-        <MobileMenu isOpen={isMenuOpen}>
-          <MobileNavLink href="/shop" onClick={closeMenu}>Shop</MobileNavLink>
-        </MobileMenu>
       </HeaderContent>
     </HeaderContainer>
   )
