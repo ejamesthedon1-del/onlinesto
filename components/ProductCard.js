@@ -22,7 +22,7 @@ const ImageContainer = styled.div`
   width: 100%;
   padding-top: 100%; /* Square aspect ratio */
   overflow: hidden;
-  background-color: ${props => props.theme.colors.surface};
+  background-color: white;
   border-radius: ${props => props.theme.borderRadius.md};
 
   @media (max-width: ${props => props.theme.breakpoints.md}) {
@@ -39,6 +39,7 @@ const ImageWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  background-color: white;
 `
 
 const Content = styled.div`

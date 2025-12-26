@@ -14,83 +14,9 @@ const PageContainer = styled.div`
 `
 
 const ShopLayout = styled.div`
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: ${props => props.theme.spacing['2xl']};
-
-  @media (max-width: ${props => props.theme.breakpoints.lg}) {
-    grid-template-columns: 1fr;
-    gap: ${props => props.theme.spacing.xl};
-  }
-`
-
-const Sidebar = styled.aside`
   display: flex;
   flex-direction: column;
   gap: ${props => props.theme.spacing.xl};
-  padding-top: ${props => props.theme.spacing.lg};
-
-  @media (max-width: ${props => props.theme.breakpoints.lg}) {
-    display: none;
-  }
-`
-
-const SidebarSection = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${props => props.theme.spacing.md};
-`
-
-const SortWrapper = styled.div`
-  width: 100%;
-  max-width: 200px;
-`
-
-const SidebarTitle = styled.h2`
-  font-size: ${props => props.theme.typography.fontSize.lg};
-  font-weight: ${props => props.theme.typography.fontWeight.semibold};
-  color: ${props => props.theme.colors.text};
-  margin-bottom: ${props => props.theme.spacing.sm};
-`
-
-const CategoryList = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-`
-
-const CategoryButton = styled.button`
-  text-align: left;
-  padding: ${props => props.theme.spacing.xs} 0;
-  font-size: ${props => props.theme.typography.fontSize.base};
-  font-weight: ${props => props.active 
-    ? props.theme.typography.fontWeight.semibold 
-    : props.theme.typography.fontWeight.normal};
-  color: ${props => props.active 
-    ? props.theme.colors.primary 
-    : props.theme.colors.textSecondary};
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: color ${props => props.theme.transitions.fast} ease;
-  position: relative;
-
-  &:hover {
-    color: ${props => props.theme.colors.primary};
-  }
-
-  ${props => props.active && `
-    &::before {
-      content: '';
-      position: absolute;
-      left: -${props.theme.spacing.md};
-      top: 50%;
-      transform: translateY(-50%);
-      width: 3px;
-      height: 100%;
-      background-color: ${props.theme.colors.primary};
-    }
-  `}
 `
 
 const MainContent = styled.div`
@@ -182,32 +108,6 @@ export default function ShopPage() {
   return (
     <PageContainer>
       <ShopLayout>
-        <Sidebar>
-          <SidebarSection>
-            <CategoryList>
-              {categories.map((category) => (
-                <CategoryButton
-                  key={category.value}
-                  active={categoryFilter === category.value}
-                  onClick={() => setCategoryFilter(category.value)}
-                >
-                  {category.label}
-                </CategoryButton>
-              ))}
-            </CategoryList>
-          </SidebarSection>
-          <SidebarSection>
-            <SidebarTitle>Sort By</SidebarTitle>
-            <SortWrapper>
-              <Select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                options={sortOptions}
-              />
-            </SortWrapper>
-          </SidebarSection>
-        </Sidebar>
-
         <MainContent>
 
           {loading && <LoadingState>Loading products...</LoadingState>}

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import Link from 'next/link'
 import { useCart } from '@/hooks/useCart'
@@ -23,6 +23,7 @@ const HeaderContent = styled.div`
   align-items: center;
   justify-content: space-between;
   gap: ${props => props.theme.spacing.lg};
+  position: relative;
 
   @media (max-width: ${props => props.theme.breakpoints.md}) {
     padding: 0 ${props => props.theme.spacing.md};
@@ -34,6 +35,12 @@ const Logo = styled(Link)`
   font-weight: ${props => props.theme.typography.fontWeight.bold};
   color: ${props => props.theme.colors.primary};
   text-decoration: none;
+  font-family: ${props => props.currentFont || props.theme.typography.fontFamily.sans};
+  transition: font-family 200ms ease-in-out;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
 `
 
 const Nav = styled.nav`
@@ -46,12 +53,24 @@ const Nav = styled.nav`
   }
 `
 
+const RightNav = styled.nav`
+  display: flex;
+  align-items: center;
+  gap: ${props => props.theme.spacing.xl};
+  margin-left: auto;
+
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    gap: ${props => props.theme.spacing.md};
+  }
+`
+
 const NavLink = styled(Link)`
   font-size: ${props => props.theme.typography.fontSize.base};
   font-weight: ${props => props.theme.typography.fontWeight.medium};
   color: ${props => props.theme.colors.text};
   text-decoration: none;
   transition: color ${props => props.theme.transitions.fast} ease;
+  position: relative;
 
   &:hover {
     color: ${props => props.theme.colors.accent};
@@ -59,6 +78,54 @@ const NavLink = styled(Link)`
 
   @media (max-width: ${props => props.theme.breakpoints.md}) {
     display: none;
+  }
+`
+
+const ShopButton = styled.button`
+  font-size: ${props => props.theme.typography.fontSize.base};
+  font-weight: ${props => props.theme.typography.fontWeight.medium};
+  color: ${props => props.theme.colors.text};
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: color ${props => props.theme.transitions.fast} ease;
+  position: relative;
+
+  &:hover {
+    color: ${props => props.theme.colors.accent};
+  }
+
+  @media (max-width: ${props => props.theme.breakpoints.md}) {
+    display: none;
+  }
+`
+
+const Submenu = styled.div`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 0;
+  display: ${props => props.isOpen ? 'flex' : 'none'};
+  flex-direction: column;
+  min-width: 120px;
+  padding: ${props => props.theme.spacing.sm};
+  z-index: 1000;
+  padding-top: ${props => props.theme.spacing.xs};
+`
+
+const SubmenuLink = styled(Link)`
+  font-size: ${props => props.theme.typography.fontSize.sm};
+  font-weight: ${props => props.theme.typography.fontWeight.normal};
+  color: ${props => props.theme.colors.text};
+  text-decoration: none;
+  padding: ${props => props.theme.spacing.xs} ${props => props.theme.spacing.sm};
+  transition: color ${props => props.theme.transitions.fast} ease;
+  line-height: 1.2;
+  white-space: nowrap;
+
+  &:hover {
+    color: ${props => props.theme.colors.accent};
   }
 `
 
@@ -164,9 +231,81 @@ const MobileNavLink = styled(Link)`
   }
 `
 
+// Array of fonts to cycle through for logo animation
+const FONT_ARRAY = [
+  'Impact',
+  'Arial Black',
+  'Bebas Neue',
+  'Oswald',
+  'Anton',
+  'Bangers',
+  'Black Ops One',
+  'Creepster',
+  'Russo One',
+  'Orbitron',
+  'Rajdhani',
+  'Righteous',
+  'Fredoka One',
+  'Lilita One',
+  'Passion One',
+  'Staatliches',
+  'Changa One',
+  'Comfortaa',
+  'Josefin Sans',
+  'Montserrat',
+  'Raleway',
+  'Roboto',
+  'Open Sans',
+  'Lato',
+  'Poppins',
+  'Ubuntu',
+  'Playfair Display',
+  'Merriweather',
+  'Lora',
+  'Crimson Text',
+  'Libre Baskerville',
+  'PT Serif',
+  'Source Serif Pro',
+  'Arvo',
+  'Roboto Slab',
+  'Oxygen',
+  'Quicksand',
+  'Nunito',
+  'Work Sans',
+  'Inter',
+  'DM Sans',
+  'Space Grotesk',
+  'Syne',
+  'Archivo',
+  'Manrope',
+  'Georgia',
+  'Courier New',
+  'Verdana',
+  'Times New Roman',
+  'Trebuchet MS',
+  'Satoshi'
+]
+
 export default function Header() {
   const { itemCount } = useCart()
   const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isShopMenuOpen, setIsShopMenuOpen] = useState(false)
+  const [currentFontIndex, setCurrentFontIndex] = useState(0)
+
+  // Font animation effect - continuous loop
+  useEffect(() => {
+    const fontInterval = setInterval(() => {
+      setCurrentFontIndex((prevIndex) => {
+        const nextIndex = prevIndex + 1
+        if (nextIndex >= FONT_ARRAY.length) {
+          return 0
+        }
+        return nextIndex
+      })
+    }, 300) // 300ms per font
+
+    return () => clearInterval(fontInterval)
+  }, [])
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen)
@@ -176,13 +315,38 @@ export default function Header() {
     setIsMenuOpen(false)
   }
 
+  const openShopMenu = () => {
+    setIsShopMenuOpen(true)
+  }
+
+  const closeShopMenu = () => {
+    setIsShopMenuOpen(false)
+  }
+
   return (
     <HeaderContainer>
       <HeaderContent>
-        <Logo href="/">STORE</Logo>
         <Nav>
-          <NavLink href="/">Home</NavLink>
-          <NavLink href="/shop">Shop</NavLink>
+          <div 
+            style={{ position: 'relative' }}
+            onMouseEnter={openShopMenu}
+            onMouseLeave={closeShopMenu}
+          >
+            <ShopButton onClick={openShopMenu}>
+              Shop
+            </ShopButton>
+            <Submenu isOpen={isShopMenuOpen}>
+              <SubmenuLink href="/shop" onClick={closeShopMenu}>All Products</SubmenuLink>
+              <SubmenuLink href="/shop?category=Tops" onClick={closeShopMenu}>Tops</SubmenuLink>
+              <SubmenuLink href="/shop?category=Bottoms" onClick={closeShopMenu}>Bottoms</SubmenuLink>
+              <SubmenuLink href="/shop?category=Outerwear" onClick={closeShopMenu}>Outerwear</SubmenuLink>
+            </Submenu>
+          </div>
+        </Nav>
+        <Logo href="/" currentFont={FONT_ARRAY[currentFontIndex]}>
+          SINNERS TESTIMONY<sub style={{ fontSize: '0.4em', verticalAlign: 'sub' }}>®</sub>
+        </Logo>
+        <RightNav>
           <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
             <HamburgerButton onClick={toggleMenu} aria-label="Toggle menu">
               <HamburgerLine isOpen={isMenuOpen} />
@@ -196,9 +360,8 @@ export default function Header() {
               {itemCount > 0 && <CartBadge>{itemCount}</CartBadge>}
             </CartLink>
           </div>
-        </Nav>
+        </RightNav>
         <MobileMenu isOpen={isMenuOpen}>
-          <MobileNavLink href="/" onClick={closeMenu}>Home</MobileNavLink>
           <MobileNavLink href="/shop" onClick={closeMenu}>Shop</MobileNavLink>
         </MobileMenu>
       </HeaderContent>
